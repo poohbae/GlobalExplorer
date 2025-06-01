@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
@@ -12,7 +12,7 @@ function HomePage() {
       navigate('/login');
     } else {
       try {
-        const decoded = jwt_decode(token);
+        const decoded = jwtDecode(token);
         setUser(decoded);
       } catch (err) {
         console.error('Invalid token');

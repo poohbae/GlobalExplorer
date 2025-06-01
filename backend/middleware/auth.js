@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 function verifyToken(req, res, next) {
   const authHeader = req.headers['authorization'];
-  console.log("Authorization header:", authHeader);
+
   if (!authHeader) return res.status(401).json({ error: 'Missing token' });
 
   const token = authHeader.split(' ')[1];
@@ -16,4 +16,5 @@ function verifyToken(req, res, next) {
     return res.status(403).json({ error: 'Invalid token' });
   }
 }
+
 module.exports = verifyToken;

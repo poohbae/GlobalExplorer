@@ -12,7 +12,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
-          path="/"
+          path="/home"
           element={token ? <HomePage /> : <Navigate to="/login" />}
         />
       </Routes>

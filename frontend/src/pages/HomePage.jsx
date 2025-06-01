@@ -24,7 +24,7 @@ function HomePage() {
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Welcome {user?.email || 'User'}!</h1>
-      <p>You are now logged in to Global Explorer 🌍</p>
+      <p>You are logged in to Global Explorer 🌍</p>
     </div>
   );
 }

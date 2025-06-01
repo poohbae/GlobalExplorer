@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -18,16 +18,15 @@ export default function Login() {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!form.email.trim() || !form.password.trim()) {
-      setError('Email and password are required.');
+    if (!form.identifier.trim() || !form.password.trim()) {
+      setError('Username/email and password are required.');
       return;
     }
 
     try {
       const res = await axios.post('http://localhost:8888/api/auth/login', form);
       localStorage.setItem('token', res.data.token);
-      alert('Logged in!');
-      navigate('/');
+      window.location.href = '/';
     } catch (err) {
       setError('Login failed. Please check your credentials.');
     }
@@ -41,14 +40,14 @@ export default function Login() {
     <div className="background">
       <div className="overlay">
         <div className="modal">
-          <h2 style={{ textAlign: 'center' }}>GlobalExplorer</h2>
-          <h3 style={{ marginBottom: 50, textAlign: 'center' }}>Register as New User</h3>
+          <h2 style={{ textAlign: 'center' }}>Welcome to Global Explorer!</h2>
+          <h3 style={{ marginBottom: 50, textAlign: 'center' }}>Login</h3>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="identifier">Username or Email</label>
             <input
-              id="email"
-              name="email"
-              value={form.email}
+              id="identifier"
+              name="identifier"
+              value={form.identifier}
               onChange={handleChange}
               className="input-field"
             />
@@ -89,14 +88,14 @@ export default function Login() {
             {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
             <br />
 
-            <button type="submit" className="button-primary">
+            <button type="submit" className="auth-button">
               Login
             </button>
           </form>
 
           <p style={{ marginTop: '30px', textAlign: 'center' }}>
             Don't have an account?{' '}
-            <Link to="/register" style={{ color: '#00a3ff', fontWeight: 'bold' }}>
+            <Link to="/register" style={{ color: '#9c4df1', fontWeight: 'bold' }}>
               Register here
             </Link>
           </p>

@@ -22,7 +22,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token'); 
-    console.log("Retrieved token:", token);
 
     axios.get('http://localhost:8888/api/auth/profile', {
       headers: {
@@ -82,6 +81,8 @@ export default function ProfilePage() {
       return;
     }
 
+    const token = localStorage.getItem('token'); 
+
     try {
       // Prepare update data
       const updateData = {
@@ -90,7 +91,11 @@ export default function ProfilePage() {
       if (newPassword) updateData.password = newPassword;
 
       // Send update request (adjust URL and method as per your API)
-      await axios.put('http://localhost:8888/api/auth/profile', updateData);
+      await axios.put('http://localhost:8888/api/auth/profile', updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
       setSuccess('Profile updated successfully!');
       setNewPassword('');

@@ -6,7 +6,7 @@ Steps:
 Credentials:
 - Username: test
 - Email: test@gmail.com
-- Password: test123
+- Password: testing123
 
 API
 1. https://restcountries.com/

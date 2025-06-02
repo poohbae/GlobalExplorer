@@ -12,6 +12,8 @@ export default function ProfilePage() {
     email: '',
     country: '',
   });
+  const [initialCountry, setInitialCountry] = useState('');
+  const [loading, setLoading] = useState(true);
   const [countries, setCountries] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -19,6 +21,7 @@ export default function ProfilePage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [updateDisabled, setUpdateDisabled] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token'); 
@@ -34,10 +37,10 @@ export default function ProfilePage() {
           email: res.data.email,
           country: res.data.country || '',
         });
+        setInitialCountry(res.data.country || '');
       })
-      .catch(err => {
-        console.error('Failed to load user profile:', err);
-      });
+      .catch(err => console.error('Failed to load user profile:', err))
+      .finally(() => setLoading(false));
     
     axios.get('https://restcountries.com/v3.1/all')
       .then(res => {
@@ -51,18 +54,21 @@ export default function ProfilePage() {
     setUser(prev => ({ ...prev, country: e.target.value }));
     setError('');
     setSuccess('');
+    setUpdateDisabled(false);
   };
 
   const handleNewPasswordChange = e => {
     setNewPassword(e.target.value);
     setError('');
     setSuccess('');
+    setUpdateDisabled(false);
   };
 
   const handleConfirmNewPasswordChange = e => {
     setConfirmNewPassword(e.target.value);
     setError('');
     setSuccess('');
+    setUpdateDisabled(false);
   };
 
   const togglePasswordVisibility = () => {
@@ -73,10 +79,17 @@ export default function ProfilePage() {
     setShowConfirmPassword(prev => !prev);
   };
 
+  const hasChanges = () => {
+    const countryChanged = user.country && user.country !== initialCountry;
+    const passwordEntered = newPassword.length > 0;
+    return countryChanged || passwordEntered;
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (newPassword.length < 8 || confirmNewPassword.length < 8) {
+    // Validation: Only run if user entered a new password
+    if ((newPassword || confirmNewPassword) && (newPassword.length < 8 || confirmNewPassword.length < 8)) {
       setError('Passwords must be at least 8 characters long.');
       return;
     }
@@ -87,21 +100,13 @@ export default function ProfilePage() {
     }
 
     const token = localStorage.getItem('token'); 
+    const updateData = {};
+
+    // Only add fields that were changed
+    if (user.country) updateData.country = user.country;
+    if (newPassword) updateData.password = newPassword;
 
     try {
-      const updateData = {
-        country: user.country,
-      };
-
-      if (newPassword) {
-        updateData.password = newPassword;
-      }
-
-      console.log('Updating with:', updateData);
-      console.log('Token: ', token);
-      console.log('password1: ', newPassword);
-      console.log('password2: ', confirmNewPassword);
-
       await axios.put('http://localhost:8888/api/auth/profile', updateData, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -112,12 +117,12 @@ export default function ProfilePage() {
       setNewPassword('');
       setConfirmNewPassword('');
       setError('');
+      setUpdateDisabled(true);
     } catch (err) {
       console.error('Update error:', err.response?.data || err.message);
       setError('Failed to update profile. Try again.');
       setSuccess('');
     }
-
   };
 
     return (
@@ -151,7 +156,7 @@ export default function ProfilePage() {
               className="input-field"
               />
 
-              <label>Country</label>
+              <label>Country:</label>
               <select
               value={user.country}
               onChange={handleCountryChange}
@@ -198,7 +203,7 @@ export default function ProfilePage() {
 
               {newPassword && (
               <>
-                  <label>Confirm New Password</label>
+                  <label>Confirm New Password:</label>
                   <div style={{ position: 'relative', width: '100%' }}>
                   <input
                   type={showConfirmPassword ? 'text' : 'password'}
@@ -232,8 +237,13 @@ export default function ProfilePage() {
               {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
               {success && <p className="success-message" style={{ textAlign: 'center', color: 'green' }}>{success}</p>}
 
-              <button type="submit" className="auth-button" style={{ marginTop: 10 }}>
-              Update
+              <button
+                type="submit"
+                className="auth-button"
+                style={{ marginTop: 10 }}
+                disabled={loading || !hasChanges() || updateDisabled}
+              >
+                Update
               </button>
           </form>
           </div>
@@ -242,5 +252,4 @@ export default function ProfilePage() {
         <Footer />
     </div>
     );
-
 }

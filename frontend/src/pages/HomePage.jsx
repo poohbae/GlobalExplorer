@@ -29,7 +29,7 @@ function HomePage() {
       <Navbar />
 
       <main style={{ flex: 1, padding: '1rem' }}>
-        <h1>Welcome {user?.username || 'User'}!</h1>
+        <h1> {user?.username || 'User'}!</h1>
       </main>
 
       <Footer />

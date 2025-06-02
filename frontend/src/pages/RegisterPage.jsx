@@ -5,9 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Register() {
-  const [form, setForm] = useState({ username: '', email: '', country: '', password: '' });
+  const [form, setForm] = useState({ username: '', email: '', country: '', password: '', confirmPassword:'' });
   const [countries, setCountries] = useState([]);
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -35,24 +34,37 @@ export default function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError('');
   };
-
-  const handleConfirmPasswordChange = e => {
-    setConfirmPassword(e.target.value);
-    setError('');
+  
+  const validateEmail = (email) => {
+    // Basic regex for email validation
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!form.username.trim() || !form.email.trim() || !form.country.trim() || !form.password.trim()) {
-      setError('Username, email, country, and password are required.');
+    if (
+      !form.username?.trim() ||
+      !form.email?.trim() ||
+      !form.country?.trim() ||
+      !form.password?.trim() ||
+      !form.confirmPassword?.trim()
+    ) {
+      setError('All fields are required.');
       return;
     }
 
-    if (form.password !== confirmPassword) {
+    if (!validateEmail(form.email.trim())) {
+      setError('Email is in the wrong format');
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
+
 
     try {
       await axios.post('http://localhost:8888/api/auth/register', form);
@@ -77,7 +89,7 @@ export default function Register() {
         <div className="modal">
           <h2 style={{ textAlign: 'center' }}>Welcome to Global Explorer!</h2>
           <h3 style={{ marginBottom: 50, textAlign: 'center' }}>Register as New User</h3>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '70%', margin: '0 auto'}}>
             <label htmlFor="username">Username</label>
             <input
               id="username"
@@ -151,8 +163,8 @@ export default function Register() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
+                value={form.confirmPassword}
+                onChange={handleChange}
                 className="input-field"
                 style={{ flex: 1 }}
               />

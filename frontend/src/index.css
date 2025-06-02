@@ -146,7 +146,7 @@ label {
 .navbar-links {
   display: flex;
   align-items: center;
-  margin-left: auto; 
+  /*margin-left: auto; */
 }
 
 .navbar-link {
@@ -167,3 +167,4 @@ label {
     font-weight: bold;
     border-bottom: 2px solid white;
 }
+

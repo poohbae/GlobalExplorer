@@ -35,13 +35,26 @@ export default function Login() {
     setShowPassword(prev => !prev);
   };
 
+
+  /*
+          margin-left: 15%; 
+      display: flex
+  ;
+      flex-direction: column;
+          width: 75%;
+          margin-right: 15%;
+      margin: 0 auto;
+      padding: 20px;
+      max-width: 70%;
+  */
+
   return (
     <div className="background">
       <div className="overlay">
         <div className="modal">
           <h2 style={{ textAlign: 'center' }}>Welcome to Global Explorer!</h2>
           <h3 style={{ marginBottom: 50, textAlign: 'center' }}>Login</h3>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '70%', margin: '0 auto'}}>
             <label htmlFor="identifier">Username or Email</label>
             <input
               id="identifier"

@@ -76,6 +76,11 @@ export default function ProfilePage() {
   const handleSubmit = async e => {
     e.preventDefault();
 
+    if (newPassword.length < 8 || confirmNewPassword.length < 8) {
+      setError('Passwords must be at least 8 characters long.');
+      return;
+    }
+
     if (newPassword && newPassword !== confirmNewPassword) {
       setError('New passwords do not match.');
       return;
@@ -84,13 +89,19 @@ export default function ProfilePage() {
     const token = localStorage.getItem('token'); 
 
     try {
-      // Prepare update data
       const updateData = {
         country: user.country,
       };
-      if (newPassword) updateData.password = newPassword;
 
-      // Send update request (adjust URL and method as per your API)
+      if (newPassword) {
+        updateData.password = newPassword;
+      }
+
+      console.log('Updating with:', updateData);
+      console.log('Token: ', token);
+      console.log('password1: ', newPassword);
+      console.log('password2: ', confirmNewPassword);
+
       await axios.put('http://localhost:8888/api/auth/profile', updateData, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -102,9 +113,11 @@ export default function ProfilePage() {
       setConfirmNewPassword('');
       setError('');
     } catch (err) {
+      console.error('Update error:', err.response?.data || err.message);
       setError('Failed to update profile. Try again.');
       setSuccess('');
     }
+
   };
 
     return (
@@ -113,59 +126,89 @@ export default function ProfilePage() {
         <Navbar />
 
         <main style={{ flex: 1 }}>
-        <div className="overlay">
-            <div
-            className="modal"
-            style={{
-                maxWidth: 400,
-                margin: 'auto',
-                marginTop: '50px', // Moves modal closer to the top
-            }}
-            >
-            <h2 style={{ textAlign: 'center' }}>Your Profile</h2>
-            <br />
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
-                <label>Username</label>
-                <input
-                value={user.username}
-                readOnly
-                className="input-field"
-                />
+          <div
+          className="modal"
+          style={{
+              maxWidth: 400,
+              margin: 'auto',
+              marginTop: '50px', // Moves modal closer to the top
+          }}
+          >
+          <h2 style={{ textAlign: 'center' }}>Your Profile</h2>
+          <br />
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+              <label>Username</label>
+              <input
+              value={user.username}
+              readOnly
+              className="input-field"
+              />
 
-                <label>Email</label>
-                <input
-                value={user.email}
-                readOnly
-                className="input-field"
-                />
+              <label>Email</label>
+              <input
+              value={user.email}
+              readOnly
+              className="input-field"
+              />
 
-                <label>Country</label>
-                <select
-                value={user.country}
-                onChange={handleCountryChange}
-                className="input-field"
-                required
-                >
-                <option value="">Select a country</option>
-                {countries.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                ))}
-                </select>
+              <label>Country</label>
+              <select
+              value={user.country}
+              onChange={handleCountryChange}
+              className="input-field"
+              required
+              >
+              <option value="">Select a country</option>
+              {countries.map(c => (
+                  <option key={c} value={c}>{c}</option>
+              ))}
+              </select>
 
-                <label htmlFor="password">Enter New Password:</label>
-                <div style={{ position: 'relative', width: '100%' }}>
-                <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={newPassword}
-                    onChange={handleNewPasswordChange}
-                    className="input-field"
-                    style={{ width: '100%' }}
-                />
-                <button
+              <label htmlFor="password">Enter New Password:</label>
+              <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={handleNewPasswordChange}
+                  className="input-field"
+                  style={{ width: '100%' }}
+              />
+              <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  style={{
+                  position: 'absolute',
+                  top: '30%',
+                  right: '10px',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  margin: 0,
+                  color: '#000',
+                  }}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              </button>
+              </div>
+
+              {newPassword && (
+              <>
+                  <label>Confirm New Password</label>
+                  <div style={{ position: 'relative', width: '100%' }}>
+                  <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmNewPassword}
+                  onChange={handleConfirmNewPasswordChange}
+                  className="input-field"
+                  />
+                  <button
                     type="button"
-                    onClick={togglePasswordVisibility}
+                    onClick={toggleConfirmPasswordVisibility}
                     style={{
                     position: 'absolute',
                     top: '30%',
@@ -178,54 +221,22 @@ export default function ProfilePage() {
                     margin: 0,
                     color: '#000',
                     }}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 >
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                    <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
                 </button>
                 </div>
+              </>
+              )}
 
-                {newPassword && (
-                <>
-                    <label>Confirm New Password</label>
-                    <div style={{ position: 'relative', width: '100%' }}>
-                    <input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    value={confirmNewPassword}
-                    onChange={handleConfirmNewPasswordChange}
-                    className="input-field"
-                    />
-                    <button
-                      type="button"
-                      onClick={toggleConfirmPasswordVisibility}
-                      style={{
-                      position: 'absolute',
-                      top: '30%',
-                      right: '10px',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      margin: 0,
-                      color: '#000',
-                      }}
-                      aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                  >
-                      <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
-                  </button>
-                  </div>
-                </>
-                )}
+              {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
+              {success && <p className="success-message" style={{ textAlign: 'center', color: 'green' }}>{success}</p>}
 
-                {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
-                {success && <p className="success-message" style={{ textAlign: 'center', color: 'green' }}>{success}</p>}
-
-                <button type="submit" className="auth-button" style={{ marginTop: 10 }}>
-                Update
-                </button>
-            </form>
-            </div>
-        </div>
+              <button type="submit" className="auth-button" style={{ marginTop: 10 }}>
+              Update
+              </button>
+          </form>
+          </div>
         </main>
 
         <Footer />

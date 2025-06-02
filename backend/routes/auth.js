@@ -7,9 +7,9 @@ const verifyToken = require('../middleware/auth');
 
 // Register
 router.post('/register', async (req, res) => {
-  const { username, email, password, country } = req.body;
+  const { username, email, password, country, confirmPassword } = req.body;
 
-  if (!username || !email || !password || !country) {
+  if (!username || !email || !password || !country ||!confirmPassword) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -63,7 +63,7 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-router.put('/profile', verifyToken, async (req, res) => {
+/*router.put('/profile', verifyToken, async (req, res) => {
   try {
     const { country, password } = req.body;
 
@@ -86,6 +86,37 @@ router.put('/profile', verifyToken, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
+});*/
+
+
+router.put('/profile', verifyToken, async (req, res) => {
+  try {
+    const { country, password } = req.body;
+    console.log('Received update:', { country, password });
+
+    const updateFields = {};
+    if (country) updateFields.country = country;
+    if (password) {
+      const bcrypt = require('bcrypt');
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      updateFields.password = hashedPassword;
+    }
+
+    console.log('Updating user ID:', req.user.id);
+    console.log('Fields to update:', updateFields);
+
+    const user = await User.findByIdAndUpdate(req.user.id, updateFields, { new: true }).select('-password');
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json(user);
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
+
+
 
 module.exports = router;

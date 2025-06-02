@@ -129,21 +129,21 @@ export default function ProfilePage() {
                 <input
                 value={user.username}
                 readOnly
-                className="profile-input"
+                className="input-field"
                 />
 
                 <label>Email</label>
                 <input
                 value={user.email}
                 readOnly
-                className="profile-input"
+                className="input-field"
                 />
 
                 <label>Country</label>
                 <select
                 value={user.country}
                 onChange={handleCountryChange}
-                className="profile-input"
+                className="input-field"
                 required
                 >
                 <option value="">Select a country</option>
@@ -160,7 +160,7 @@ export default function ProfilePage() {
                     type={showPassword ? 'text' : 'password'}
                     value={newPassword}
                     onChange={handleNewPasswordChange}
-                    className="profile-input"
+                    className="input-field"
                     style={{ width: '100%' }}
                 />
                 <button
@@ -192,7 +192,7 @@ export default function ProfilePage() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmNewPassword}
                     onChange={handleConfirmNewPasswordChange}
-                    className="profile-input"
+                    className="input-field"
                     />
                     <button
                       type="button"

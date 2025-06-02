@@ -188,7 +188,7 @@ export default function Register() {
           <p style={{ marginTop: '30px', textAlign: 'center' }}>
             
             Already have an account?{' '}
-            <Link to="/login" style={{ color: '#9c4df1', fontWeight: 'bold' }}>
+            <Link to="/login" style={{ color: '#2e5ca0', fontWeight: 'bold' }}>
               Login here
             </Link>
           </p>

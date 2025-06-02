@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
@@ -8,7 +8,6 @@ export default function Login() {
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -95,7 +94,7 @@ export default function Login() {
 
           <p style={{ marginTop: '30px', textAlign: 'center' }}>
             Don't have an account?{' '}
-            <Link to="/register" style={{ color: '#9c4df1', fontWeight: 'bold' }}>
+            <Link to="/register" style={{ color: '#2e5ca0', fontWeight: 'bold' }}>
               Register here
             </Link>
           </p>

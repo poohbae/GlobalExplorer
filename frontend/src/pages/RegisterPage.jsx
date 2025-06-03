@@ -10,6 +10,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,16 +42,20 @@ export default function Register() {
     return regex.test(email);
   };
 
+  const hasChanges = () => {
+    return (
+      form.username.trim() &&
+      form.email.trim() &&
+      form.country.trim() &&
+      form.password.trim() &&
+      form.confirmPassword.trim()
+    );
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (
-      !form.username?.trim() ||
-      !form.email?.trim() ||
-      !form.country?.trim() ||
-      !form.password?.trim() ||
-      !form.confirmPassword?.trim()
-    ) {
+    if (!hasChanges()) {
       setError('All fields are required.');
       return;
     }
@@ -65,13 +70,15 @@ export default function Register() {
       return;
     }
 
-
+    setLoading(true);
     try {
       await axios.post('http://localhost:8888/api/auth/register', form);
       alert('Registered! Proceed to login.');
       navigate('/login');
     } catch (err) {
       setError('Registration failed. Try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -192,7 +199,7 @@ export default function Register() {
             {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
             
             <br></br>
-            <button type="submit" className="auth-button">
+            <button type="submit" className="auth-button" disabled={loading || !hasChanges()}>
               Register
             </button>
           </form>

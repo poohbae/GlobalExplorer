@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../header-logo.svg';
 
-export default function Header() {
+export default function Header({username}) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -19,8 +19,8 @@ export default function Header() {
             <img src={logo} alt="Logo" style={{ height: '80px', cursor: 'pointer', marginLeft: '40px', marginRight: '40px' }} />
           </Link>
         </div>
-        <div style={{ fontWeight: 'bold', fontSize: '2.5rem', marginLeft: '40px', marginRight: '40px' }}>
-          Global Explorer
+        <div style={{ fontWeight: 'bold', fontSize: '2rem', marginLeft: '40px', marginRight: '40px' }}>
+          {`Welcome to Global Explorer${username ? `, ${username}` : ''}`}
         </div>
         <div>
           <button

@@ -25,11 +25,11 @@ function HomePage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      <Header username={user?.username} />
       <Navbar />
 
       <main style={{ flex: 1, padding: '1rem' }}>
-        <h1>Not {user?.username || 'User'}!</h1>
+        <h1>Welcome {user?.username || 'User'}!</h1>
       </main>
 
       <Footer />

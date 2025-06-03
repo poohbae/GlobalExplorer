@@ -127,7 +127,8 @@ export default function ProfilePage() {
 
     return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
+      
+        <Header username={user?.username} />
         <Navbar />
 
         <main style={{ flex: 1 }}>

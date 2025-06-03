@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +8,13 @@ export default function Login() {
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginDisabled, setLoginDisabled] = useState(true);
+
+  useEffect(() => {
+    const isFormValid = form.identifier.trim() && form.password.trim();
+    setLoginDisabled(!isFormValid || isSubmitting);
+  }, [form, isSubmitting]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -28,6 +35,7 @@ export default function Login() {
       window.location.href = '/';
     } catch (err) {
       setError('Login failed. Please check your credentials.');
+      setIsSubmitting(false); 
     }
   };
 
@@ -100,8 +108,13 @@ export default function Login() {
             {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
             <br />
 
-            <button type="submit" className="auth-button">
-              Login
+            <button
+              type="submit"
+              className="auth-button"
+              style={{ marginTop: 10 }}
+              disabled={loginDisabled}
+            >
+              {isSubmitting ? 'Logging in...' : 'Login'}
             </button>
           </form>
 

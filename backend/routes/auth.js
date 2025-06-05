@@ -7,9 +7,9 @@ const verifyToken = require('../middleware/auth');
 
 // Register
 router.post('/register', async (req, res) => {
-  const { username, email, country, password, confirmPassword } = req.body;
+  const { username, email, country, password, confirmPassword, currency } = req.body;
 
-  if (!username || !email || !country || !password ||!confirmPassword) {
+  if (!username || !email || !country || !currency || !password || !confirmPassword) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -18,22 +18,12 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    // Fetch currency info from the API
-    const apiUrl = `https://restcountries.com/v3.1/name/${encodeURIComponent(country)}?fullText=true&fields=currencies`;
-    const response = await axios.get(apiUrl);
-
-    const countryData = response.data[0];
-    const currencyKeys = Object.keys(countryData.currencies);
-    const currency = currencyKeys[0];
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({ username, email, password: hashedPassword, country, currency });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
-    // Check for duplicate key error (unique fields)
     if (err.code === 11000) {
       return res.status(400).json({ error: 'Username or email already in use' });
     }

@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+import countryImg from '../images/country.jpg';
+import attractionImg from '../images/attraction.jpg';
+import weatherImg from '../images/weather.jpg';
 
 function HomePage() {
   const [user, setUser] = useState(null);
@@ -37,9 +42,9 @@ function HomePage() {
         }));
         setCountries(allCountries);
 
-        // Randomly select 3 countries
+        // Randomly select 10 countries
         const shuffled = allCountries.sort(() => 0.5 - Math.random());
-        setTopCountries(shuffled.slice(0, 20));
+        setTopCountries(shuffled.slice(0, 10));
       } catch (error) {
         console.error('Failed to fetch countries:', error);
       }
@@ -58,6 +63,40 @@ function HomePage() {
       <Navbar />
 
       <main style={{ flex: 1, padding: '1rem' }}>
+        <Carousel
+          showThumbs={false}
+          showStatus={false}
+          infiniteLoop
+          autoPlay
+          interval={3000}
+          stopOnHover
+          showArrows
+        >
+          <div
+            onClick={() => navigate('/country')}
+            className="carousel-slide"
+            style={{ backgroundImage: `url(${countryImg})` }}
+          >
+            <button className="carousel-button">Explore by Country</button>
+          </div>
+
+          <div
+            onClick={() => navigate('/attraction')}
+            className="carousel-slide"
+            style={{ backgroundImage: `url(${attractionImg})` }}
+          >
+            <button className="carousel-button">Explore by Attractions</button>
+          </div>
+
+          <div
+            onClick={() => navigate('/weather')}
+            className="carousel-slide"
+            style={{ backgroundImage: `url(${weatherImg})` }}
+          >
+            <button className="carousel-button">Explore by Weather</button>
+          </div>
+        </Carousel>
+
         <div className="search-bar-container">
           <input
             type="text"
@@ -67,19 +106,19 @@ function HomePage() {
             className="search-input"
           />
         </div>
-
-
-        <h2 style={{ textAlign: 'center' }}>Top Countries to Visit</h2>
-        <div className="country-grid">
-          {filteredCountries.map((country, index) => (
-            <div key={index} className="country-card" onClick={() => navigate(`/countryDetail/${encodeURIComponent(country.name)}`)}>
-              <div
-                className="country-flag"
-                style={{ backgroundImage: `url(${country.flag})` }}
-              ></div>
-              <p className="country-name">{country.name}</p>
-            </div>
-          ))}
+        <div className='country-container'>
+          <h2 style={{ textAlign: 'center' }}>Top Countries to Visit</h2>
+          <div className="country-grid">
+            {filteredCountries.map((country, index) => (
+              <div key={index} className="country-card" onClick={() => navigate(`/countryDetail/${encodeURIComponent(country.name)}`)}>
+                <div
+                  className="country-flag"
+                  style={{ backgroundImage: `url(${country.flag})` }}
+                ></div>
+                <p className="country-name">{country.name}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
       <Footer />

@@ -13,7 +13,7 @@ code {
 
 .background::before {
   content: '';
-  background-image: url('background.jpg');
+  background-image: url('../src/images/background.jpg');
   background-size: cover;
   background-position: center;
   position: fixed;
@@ -113,6 +113,10 @@ label {
   transition: background-color 0.3s, cursor 0.3s;
 }
 
+.auth-button:hover {
+  filter: brightness(85%);
+}
+
 .auth-button:disabled {
   background-color: #a0a0a0;
   cursor: not-allowed;
@@ -174,6 +178,34 @@ label {
     border-bottom: 2px solid white;
 }
 
+.carousel-slide {
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-slide .carousel-button {
+  background-color: #2e5ca0;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  transition: background-color 0.3s ease;
+}
+
+.carousel-slide .carousel-button:hover {
+  filter: brightness(85%);
+}
+
 .search-bar-container {
   margin-top: 1rem;
   text-align: center;
@@ -182,10 +214,26 @@ label {
 
 .search-input {
   padding: 0.5rem 1rem;
-  width: 50%;
+  width: 40%;
+  height: 30px;
   font-size: 1rem;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #2e5ca0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  transition: box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-color: #888;
+}
+
+.country-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .country-grid {

@@ -11,7 +11,6 @@ function CountryDetail() {
       currency: '',
     });
   const [country, setCountry] = useState(null);
-  const [exchangeRate, setExchangeRate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,33 +22,19 @@ function CountryDetail() {
 
         const token = localStorage.getItem('token');
         if (token) {
-            const profileRes = await axios.get('http://localhost:8888/api/auth/profile', {
+          const profileRes = await axios.get('http://localhost:8888/api/auth/profile', {
             headers: {
-                Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             }
             });
-            setUser(profileRes.data);
+          setUser(profileRes.data);
         }
 
         // Fetch country by full name
         const res = await axios.get(
-            `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`
+          `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`
         );
         setCountry(res.data[0]);
-
-        const targetCurrency = Object.keys(res.data[0].currencies)[0]; // e.g., "MYR"
-        setCountry(res.data[0]);
-
-        const apiKey = 'b94516091f8941f88fde3347e1302932';
-
-        if (token && targetCurrency && user.currency) {
-        const exchangeRes = await axios.get(
-            `https://api.currencyfreaks.com/v2.0/rates/latest?apikey=${apiKey}&base=${user.currency}`
-        );
-
-        const rate = exchangeRes.data.rates[targetCurrency];
-        setExchangeRate(rate);
-        }
 
       } catch (err) {
         setError('Country not found');
@@ -93,11 +78,6 @@ function CountryDetail() {
         <p><strong>Languages:</strong> {languages}</p>
         <p><strong>Translations:</strong> {translations}</p>
         <p><strong>Currency:</strong> {currencies}</p>
-        {exchangeRate && (
-            <p>
-                <strong>Exchange Rate:</strong> 1 {user.currency} = {exchangeRate} {Object.keys(country.currencies)[0]}
-            </p>
-            )}
         <button
             type="submit"
             className="add-button"

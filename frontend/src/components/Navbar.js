@@ -15,6 +15,12 @@ export default function Navbar() {
             Home
           </Link>
           <Link
+            to="/country"
+            className={`navbar-link ${location.pathname === '/country' ? 'active' : ''}`}
+          >
+            Countries
+          </Link>
+          <Link
             to="/profile"
             className={`navbar-link ${location.pathname === '/profile' ? 'active' : ''}`}
           >

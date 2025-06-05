@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
+import CountryDetailPage from './pages/CountryDetailPage';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -17,6 +18,7 @@ function App() {
           element={token ? <HomePage /> : <Navigate to="/login" />}
         />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/countryDetail/:countryName" element={<CountryDetailPage />} />
       </Routes>
     </Router>
   );

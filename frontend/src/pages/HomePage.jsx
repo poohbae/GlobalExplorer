@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';  // no curly braces here
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode'; 
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,6 +8,9 @@ import Navbar from '../components/Navbar';
 
 function HomePage() {
   const [user, setUser] = useState(null);
+  const [countries, setCountries] = useState([]);
+  const [topCountries, setTopCountries] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,15 +27,61 @@ function HomePage() {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await axios.get('https://restcountries.com/v3.1/all?fields=name,flags');
+        const allCountries = res.data.map(country => ({
+          name: country.name.common,
+          flag: country.flags?.png || ''
+        }));
+        setCountries(allCountries);
+
+        // Randomly select 3 countries
+        const shuffled = allCountries.sort(() => 0.5 - Math.random());
+        setTopCountries(shuffled.slice(0, 20));
+      } catch (error) {
+        console.error('Failed to fetch countries:', error);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  const filteredCountries = topCountries.filter(country =>
+    country.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header username={user?.username} />
       <Navbar />
 
       <main style={{ flex: 1, padding: '1rem' }}>
-        <h1>Welcome {user?.username || 'User'}!</h1>
-      </main>
+        <div className="search-bar-container">
+          <input
+            type="text"
+            placeholder="Search countries..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
 
+
+        <h2 style={{ textAlign: 'center' }}>Top Countries to Visit</h2>
+        <div className="country-grid">
+          {filteredCountries.map((country, index) => (
+            <div key={index} className="country-card" onClick={() => navigate(`/countryDetail/${encodeURIComponent(country.name)}`)}>
+              <div
+                className="country-flag"
+                style={{ backgroundImage: `url(${country.flag})` }}
+              ></div>
+              <p className="country-name">{country.name}</p>
+            </div>
+          ))}
+        </div>
+      </main>
       <Footer />
     </div>
   );

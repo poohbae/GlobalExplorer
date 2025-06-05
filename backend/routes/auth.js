@@ -7,16 +7,28 @@ const verifyToken = require('../middleware/auth');
 
 // Register
 router.post('/register', async (req, res) => {
-  const { username, email, password, country, confirmPassword } = req.body;
+  const { username, email, country, password, confirmPassword } = req.body;
 
-  if (!username || !email || !password || !country ||!confirmPassword) {
+  if (!username || !email || !country || !password ||!confirmPassword) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
+  if (password !== confirmPassword) {
+    return res.status(400).json({ error: 'Passwords do not match' });
+  }
+
   try {
+    // Fetch currency info from the API
+    const apiUrl = `https://restcountries.com/v3.1/name/${encodeURIComponent(country)}?fullText=true&fields=currencies`;
+    const response = await axios.get(apiUrl);
+
+    const countryData = response.data[0];
+    const currencyKeys = Object.keys(countryData.currencies);
+    const currency = currencyKeys[0];
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ username, email, password: hashedPassword, country });
+    const newUser = new User({ username, email, password: hashedPassword, country, currency });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -68,7 +80,20 @@ router.put('/profile', verifyToken, async (req, res) => {
     const { country, password } = req.body;
     const updateFields = {};
 
-    if (country) updateFields.country = country;
+    // Handle country update
+    if (country) {
+      updateFields.country = country;
+
+      // Fetch currency for the new country
+      const apiUrl = `https://restcountries.com/v3.1/name/${encodeURIComponent(country)}?fullText=true&fields=currencies`;
+      const response = await axios.get(apiUrl);
+
+      const countryData = response.data[0];
+      const currencyKeys = Object.keys(countryData.currencies);
+      const currency = currencyKeys[0];
+
+      updateFields.currency = currency;
+    }
 
     if (password) {
       if (password.length < 8) {
@@ -80,6 +105,7 @@ router.put('/profile', verifyToken, async (req, res) => {
       updateFields.password = hashedPassword;
     }
 
+    // Update user
     const user = await User.findByIdAndUpdate(req.user.id, updateFields, {
       new: true
     }).select('-password');

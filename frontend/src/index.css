@@ -173,3 +173,61 @@ label {
     font-weight: bold;
     border-bottom: 2px solid white;
 }
+
+.search-bar-container {
+  margin-top: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  padding: 0.5rem 1rem;
+  width: 50%;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.country-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.country-card {
+  width: 30%;
+  max-width: 250px;
+}
+
+.country-flag {
+  height: 150px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-size: cover;
+  background-position: center;
+}
+
+.country-name {
+  text-align: center;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.back-link {
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 8px 12px;
+}
+
+.add-button {
+  width: 20%;
+  padding: 12px;  
+  font-size: 16px;
+  background-color: #2e5ca0;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

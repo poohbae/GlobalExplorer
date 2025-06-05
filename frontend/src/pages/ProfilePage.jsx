@@ -41,13 +41,13 @@ export default function ProfilePage() {
       })
       .catch(err => console.error('Failed to load user profile:', err))
       .finally(() => setLoading(false));
-    
-    axios.get('https://restcountries.com/v3.1/all')
-      .then(res => {
-        const countryNames = res.data.map(c => c.name.common).sort((a, b) => a.localeCompare(b));
-        setCountries(countryNames);
-      })
-      .catch(err => console.error('Failed to fetch countries:', err));
+
+      axios.get('https://restcountries.com/v3.1/all?fields=name')
+        .then(res => {
+          const countryNames = res.data.map(c => c.name.common).sort((a, b) => a.localeCompare(b));
+          setCountries(countryNames);
+        })
+        .catch(err => console.error('Failed to fetch countries:', err));
   }, []);
 
   const handleCountryChange = e => {
@@ -127,7 +127,6 @@ export default function ProfilePage() {
 
     return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      
         <Header username={user?.username} />
         <Navbar />
 

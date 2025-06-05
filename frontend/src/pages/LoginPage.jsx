@@ -42,20 +42,7 @@ export default function Login() {
   const togglePasswordVisibility = () => {
     setShowPassword(prev => !prev);
   };
-
-
-  /*
-          margin-left: 15%; 
-      display: flex
-  ;
-      flex-direction: column;
-          width: 75%;
-          margin-right: 15%;
-      margin: 0 auto;
-      padding: 20px;
-      max-width: 70%;
-  */
-
+  
   return (
     <div className="background">
       <div className="overlay">

@@ -14,10 +14,10 @@ export default function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch country names only
+    // Fetch country names only using the updated API
     const fetchCountries = async () => {
       try {
-        const res = await axios.get('https://restcountries.com/v3.1/all');
+        const res = await axios.get('https://restcountries.com/v3.1/all?fields=name');
         // Map to extract the common country names and sort alphabetically
         const countryNames = res.data
           .map(country => country.name.common)

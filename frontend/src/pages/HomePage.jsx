@@ -13,9 +13,8 @@ import weatherImg from '../images/weather.jpg';
 
 function HomePage() {
   const [user, setUser] = useState(null);
-  const [countries, setCountries] = useState([]);
   const [topCountries, setTopCountries] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [topAttractions, setTopAttractions] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,29 +32,40 @@ function HomePage() {
   }, [navigate]);
 
   useEffect(() => {
-    const fetchCountries = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('https://restcountries.com/v3.1/all?fields=name,flags');
-        const allCountries = res.data.map(country => ({
+        // Fetch all countries
+        const countryRes = await axios.get('https://restcountries.com/v3.1/all?fields=name,flags');
+        const allCountries = countryRes.data.map(country => ({
           name: country.name.common,
           flag: country.flags?.png || ''
         }));
-        setCountries(allCountries);
 
         // Randomly select 10 countries
         const shuffled = allCountries.sort(() => 0.5 - Math.random());
-        setTopCountries(shuffled.slice(0, 10));
+        const selected = shuffled.slice(0, 10);
+        setTopCountries(selected);
+
+        // Fetch top attractions for each selected country
+        const allAttractions = [];
+
+        for (const country of selected) {
+          const res = await axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(country.name)}`);
+          const topSights = res.data.sights?.slice(0, 1) || [];
+          allAttractions.push(...topSights.map(sight => ({
+            ...sight,
+            country: country.name
+          })));
+        }
+
+        setTopAttractions(allAttractions);
       } catch (error) {
-        console.error('Failed to fetch countries:', error);
+        console.error('Failed to fetch countries or attractions:', error);
       }
     };
 
-    fetchCountries();
+    fetchData();
   }, []);
-
-  const filteredCountries = topCountries.filter(country =>
-    country.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -97,25 +107,43 @@ function HomePage() {
           </div>
         </Carousel>
 
-        <div className="search-bar-container">
-          <input
-            type="text"
-            placeholder="Search countries..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-        </div>
-        <div className='country-container'>
+        <div className='country-container' style={{ marginBottom: '2rem' }} >
           <h2 style={{ textAlign: 'center' }}>Top Countries to Visit</h2>
           <div className="country-grid">
-            {filteredCountries.map((country, index) => (
+            {topCountries.map((country, index) => (
               <div key={index} className="country-card" onClick={() => navigate(`/countryDetail/${encodeURIComponent(country.name)}`)}>
                 <div
                   className="country-flag"
                   style={{ backgroundImage: `url(${country.flag})` }}
                 ></div>
                 <p className="country-name">{country.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className='country-container'>
+          <h2 style={{ textAlign: 'center' }}>Top Attractions to Visit</h2>
+          <div className="attractions-grid">
+            {topAttractions.map((sight, index) => (
+              <div key={index} className="attraction-card" onClick={() => navigate(`/attractionDetail/${sight.country}/${encodeURIComponent(sight.title)}`)}>
+                {sight.thumbnail && (
+                  <img src={sight.thumbnail} alt={sight.title} className="attraction-img" />
+                )}
+                <h4>{sight.title}</h4>
+                <p>{sight.description || 'No description available'}</p>
+                <p><strong>Rating:</strong> {sight.rating ?? 'N/A'} / 5</p>
+                <p><strong>Reviews:</strong> {sight.reviews ?? 'N/A'}</p>
+                <p><strong>Price:</strong> {sight.price ?? 'N/A'}</p>
+                <p>
+                  <strong>Country:</strong>{' '}
+                  {sight.country}
+                  <img
+                    src={topCountries.find(c => c.name === sight.country)?.flag}
+                    alt={`${sight.country} flag`}
+                    style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
+                  />
+                </p>
               </div>
             ))}
           </div>

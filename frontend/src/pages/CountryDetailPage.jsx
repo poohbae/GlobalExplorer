@@ -6,20 +6,14 @@ import Footer from '../components/Footer';
 
 function CountryDetail() {
   const { countryName } = useParams();
-  const [user, setUser] = useState({
-      username: '',
-      currency: '',
-    });
+  const [user, setUser] = useState({username: '', });
   const [country, setCountry] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [attractions, setAttractions] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCountry = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
         const token = localStorage.getItem('token');
         if (token) {
           const profileRes = await axios.get('http://localhost:8888/api/auth/profile', {
@@ -31,24 +25,25 @@ function CountryDetail() {
         }
 
         // Fetch country by full name
-        const res = await axios.get(
+        const countryRes = await axios.get(
           `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`
         );
-        setCountry(res.data[0]);
+        setCountry(countryRes.data[0]);
 
+        // Fetch country attractions
+        const attractionRes = await axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
+        const topSights = attractionRes.data.sights?.slice(0, 5) || []; // Limit to 5
+        setAttractions(topSights);
       } catch (err) {
         setError('Country not found');
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchCountry();
   }, [countryName]);
 
-  if (loading) return <p style={{ padding: '1rem' }}>Loading Country Details...</p>;
   if (error) return <p>{error}</p>;
-  if (!country) return null;
+  if (!country) return <p style={{ padding: '1rem' }}>Loading Country details...</p>;
 
   const region = country.region || 'N/A';
   const capital = country.capital ? country.capital.join(', ') : 'N/A';
@@ -62,11 +57,42 @@ function CountryDetail() {
   ? Object.keys(country.currencies).join(', ')
   : 'N/A';
 
+  const handleAddToFavourite = async (sight) => {
+    try {
+      const userID = localStorage.getItem('userID');
+
+      if (!userID) {
+        alert('User not logged in');
+        return;
+      }
+
+      const payload = {
+        userID,
+        country: countryName,
+        attractionName: sight.title,
+        attractionDescription: sight.description || 'No description',
+        attractionRating: sight.rating?.toString() || 'N/A',
+        attractionReview: sight.reviews?.toString() || 'N/A',
+        attractionPrice: sight.price || 'N/A'
+      };
+
+      await axios.post('http://localhost:8888/api/auth/addToFavourite', payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      alert('Attraction added to favourites!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to add favourite');
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header username={user?.username} />
       <Link to="/" className='back-link'>← Back to Home</Link>
-      <div style={{ padding: '1rem' }}>
+      <div style={{ textAlign:'center' }}>
         <h2>{country.name.common}</h2>
         <img
             src={country.flags.svg || country.flags.png}
@@ -78,13 +104,35 @@ function CountryDetail() {
         <p><strong>Languages:</strong> {languages}</p>
         <p><strong>Translations:</strong> {translations}</p>
         <p><strong>Currency:</strong> {currencies}</p>
-        <button
-            type="submit"
-            className="add-button"
-            style={{ marginTop: 10 }}
-            >
-            Add to Favourite
-        </button>
+
+        {attractions.length > 0 && (
+          <div style={{ marginTop: '3rem' }}>
+            <h3 style={{ textAlign: 'center' }}>Top Attractions in {countryName}</h3>
+            <div className="attractions-grid">
+              {attractions.map((sight, index) => (
+                <div key={index} className="attraction-card">
+                  {sight.thumbnail && (
+                    <img src={sight.thumbnail} alt={sight.title} className="attraction-img" />
+                  )}
+                  <h4>{sight.title}</h4>
+                  <p>{sight.description || 'No description available'}</p>
+                  <p><strong>Rating:</strong> {sight.rating ?? 'N/A'} / 5</p>
+                  <p><strong>Reviews:</strong> {sight.reviews ?? 'N/A'}</p>
+                  <p><strong>Price:</strong> {sight.price ?? 'N/A'}</p>
+
+                  <button
+                    type="button"
+                    className="add-button"
+                    id={`add-fav-${index}`}
+                    onClick={() => handleAddToFavourite(sight, index)}
+                  >
+                    Add to Favourite
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </div>

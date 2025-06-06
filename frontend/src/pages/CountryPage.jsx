@@ -6,10 +6,10 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 
-function HomePage() {
+function CountryPage() {
   const [user, setUser] = useState(null);
-  const [countries, setCountries] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [countries, setCountries] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,7 +34,16 @@ function HomePage() {
           name: country.name.common,
           flag: country.flags?.png || ''
         }));
-        setCountries(allCountries);
+
+        // Pick 20 random countries
+        const selectedCountries = [];
+        const copyCountries = [...allCountries];
+        while (selectedCountries.length < 20 && copyCountries.length > 0) {
+          const randomIndex = Math.floor(Math.random() * copyCountries.length);
+          selectedCountries.push(copyCountries.splice(randomIndex, 1)[0]);
+        }
+
+        setCountries(selectedCountries);
       } catch (error) {
         console.error('Failed to fetch countries:', error);
       }
@@ -81,4 +90,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default CountryPage;

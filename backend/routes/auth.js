@@ -1,9 +1,11 @@
 const express = require('express');
-const router = express.Router();
+const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const router = express.Router();
 const User = require('../models/User');
 const verifyToken = require('../middleware/auth');
+const Favourite = require('../models/Favourite');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -53,7 +55,62 @@ router.post('/login', async (req, res) => {
   res.json({ token, user: { id: user._id, username: user.username } });
 });
 
-// GET /api/auth/profile
+// Call country attractions API
+const attractionApiKey = '2631d090e9891dfbd03633f73578e7818c829426f633cf41eeaa54b8bfc38085';
+
+// Utility function to add a delay
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+router.get('/api/auth/attractions', async (req, res) => {
+  const country = req.query.country;
+
+  try {
+    // Delay before making the SerpAPI request
+    await sleep(2000); // 2 seconds delay
+
+    const response = await axios.get('https://serpapi.com/search.json', {
+      params: {
+        engine: 'google',
+        q: `${country} Attractions`,
+        google_domain: 'google.com',
+        api_key: attractionApiKey
+      }
+    });
+
+    const sights = response.data?.top_sights?.sights || [];
+    res.json({ sights }); // Return only relevant data
+  } catch (err) {
+    console.error('Error fetching from SerpAPI:', err.message);
+    res.status(500).json({ error: 'Failed to fetch attractions' });
+  }
+});
+
+// Add country attraction to database
+router.post('/addToFavourite', verifyToken, async (req, res) => {
+  const { userID, country, attractionName, attractionDescription,
+    attractionRating, attractionReview, attractionPrice
+  } = req.body;
+
+  if (!userID || !country || !attractionName || !attractionDescription || !attractionRating || !attractionReview || !attractionPrice) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  try {
+    const favourite = new Favourite({
+      userID: req.user.id, country, attractionName, attractionDescription,
+      attractionRating, attractionReview, attractionPrice
+    });
+
+    await favourite.save();
+    res.status(201).json({ message: 'Attraction added to favourites' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get user details
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -65,6 +122,7 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
+// Update profile
 router.put('/profile', verifyToken, async (req, res) => {
   try {
     const { country, password } = req.body;

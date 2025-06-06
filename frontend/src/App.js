@@ -4,6 +4,9 @@ import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import CountryPage from './pages/CountryPage';
 import CountryDetailPage from './pages/CountryDetailPage';
+import AttractionPage from './pages/AttractionPage';
+import AttractionDetailPage from './pages/AttractionDetailPage';
+import FavouritePage from './pages/FavouritePage';
 import ProfilePage from './pages/ProfilePage';
 
 function App() {
@@ -18,8 +21,11 @@ function App() {
           path="/"
           element={token ? <HomePage /> : <Navigate to="/login" />}
         />        
-        <Route path="/countryDetail/:countryName" element={<CountryDetailPage />} />
         <Route path="/country" element={<CountryPage />} />
+        <Route path="/countryDetail/:countryName" element={<CountryDetailPage />} />
+        <Route path="/attraction" element={<AttractionPage />} />
+        <Route path="/attractionDetail/:countryName/:attractionName" element={<AttractionDetailPage />} />
+        <Route path="/favourite" element={<FavouritePage />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </Router>

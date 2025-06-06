@@ -32,6 +32,7 @@ export default function Login() {
     try {
       const res = await axios.post('http://localhost:8888/api/auth/login', form);
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userID', res.data.user.id); 
       window.location.href = '/';
     } catch (err) {
       setError('Login failed. Please check your credentials.');

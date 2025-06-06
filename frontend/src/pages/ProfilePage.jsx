@@ -14,12 +14,12 @@ export default function ProfilePage() {
   });
   const [initialCountry, setInitialCountry] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [countries, setCountries] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [updateDisabled, setUpdateDisabled] = useState(false);
 

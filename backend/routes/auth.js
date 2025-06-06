@@ -9,7 +9,7 @@ const Favourite = require('../models/Favourite');
 
 // Register
 router.post('/register', async (req, res) => {
-  const { username, email, country, password, confirmPassword, currency } = req.body;
+  const { username, email, country, password, confirmPassword } = req.body;
 
   if (!username || !email || !country || !currency || !password || !confirmPassword) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, email, password: hashedPassword, country, currency });
+    const newUser = new User({ username, email, password: hashedPassword, country });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -89,23 +89,40 @@ router.get('/api/auth/attractions', async (req, res) => {
 
 // Add country attraction to database
 router.post('/addToFavourite', verifyToken, async (req, res) => {
-  const { userID, country, attractionName, attractionDescription,
-    attractionRating, attractionReview, attractionPrice
+  const { userID, countryName, countryFlag, attractionName, attractionDescription,
+    attractionRating, attractionReview, attractionPrice, attractionThumbnail
   } = req.body;
 
-  if (!userID || !country || !attractionName || !attractionDescription || !attractionRating || !attractionReview || !attractionPrice) {
+  if (!userID || !countryName || !countryFlag || !attractionName || !attractionDescription || !attractionRating || !attractionReview || !attractionPrice || !attractionThumbnail) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
     const favourite = new Favourite({
-      userID: req.user.id, country, attractionName, attractionDescription,
-      attractionRating, attractionReview, attractionPrice
+      userID: req.user.id, countryName, countryFlag, attractionName, attractionDescription,
+      attractionRating, attractionReview, attractionPrice, attractionThumbnail
     });
 
     await favourite.save();
     res.status(201).json({ message: 'Attraction added to favourites' });
   } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get favourites details
+router.get('/favourite', verifyToken, async (req, res) => {
+  try {
+    // Fetch user
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Fetch favourites by userID
+    const favourites = await Favourite.find({ userID: req.user.id });
+
+    res.json(favourites);
+  } catch (err) {
+    console.error('Server error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -131,16 +148,6 @@ router.put('/profile', verifyToken, async (req, res) => {
     // Handle country update
     if (country) {
       updateFields.country = country;
-
-      // Fetch currency for the new country
-      const apiUrl = `https://restcountries.com/v3.1/name/${encodeURIComponent(country)}?fullText=true&fields=currencies`;
-      const response = await axios.get(apiUrl);
-
-      const countryData = response.data[0];
-      const currencyKeys = Object.keys(countryData.currencies);
-      const currency = currencyKeys[0];
-
-      updateFields.currency = currency;
     }
 
     if (password) {

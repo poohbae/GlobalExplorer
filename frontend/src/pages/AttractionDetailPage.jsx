@@ -64,7 +64,8 @@ const [countryFlag, setCountryFlag] = useState('');
 
       const payload = {
         userID,
-        country: countryName,
+        countryName: countryName,
+        countryFlag: country.flags.svg || country.flags.png || '',
         attractionName: sight.title,
         attractionDescription: sight.description || 'No description',
         attractionRating: sight.rating?.toString() || 'N/A',

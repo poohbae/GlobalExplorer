@@ -6,6 +6,7 @@ import CountryPage from './pages/CountryPage';
 import CountryDetailPage from './pages/CountryDetailPage';
 import AttractionPage from './pages/AttractionPage';
 import AttractionDetailPage from './pages/AttractionDetailPage';
+import WeatherPage from './pages/WeatherPage';
 import FavouritePage from './pages/FavouritePage';
 import ProfilePage from './pages/ProfilePage';
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/countryDetail/:countryName" element={<CountryDetailPage />} />
         <Route path="/attraction" element={<AttractionPage />} />
         <Route path="/attractionDetail/:countryName/:attractionName" element={<AttractionDetailPage />} />
+        <Route path="/weather" element={<WeatherPage />} />
         <Route path="/favourite" element={<FavouritePage />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>

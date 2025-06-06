@@ -68,12 +68,14 @@ function CountryDetail() {
 
       const payload = {
         userID,
-        country: countryName,
+        countryName: countryName,
+        countryFlag: country.flags.svg || country.flags.png || '',
         attractionName: sight.title,
         attractionDescription: sight.description || 'No description',
         attractionRating: sight.rating?.toString() || 'N/A',
         attractionReview: sight.reviews?.toString() || 'N/A',
-        attractionPrice: sight.price || 'N/A'
+        attractionPrice: sight.price || 'N/A',
+        attractionThumbnail: sight.thumbnail || 'N/A'
       };
 
       await axios.post('http://localhost:8888/api/auth/addToFavourite', payload, {

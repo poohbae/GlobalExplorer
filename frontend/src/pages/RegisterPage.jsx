@@ -72,16 +72,7 @@ export default function Register() {
 
     setLoading(true);
     try {
-      // Fetch currency before registration
-      const apiUrl = `https://restcountries.com/v3.1/name/${encodeURIComponent(form.country)}?fullText=true&fields=currencies`;
-      const response = await axios.get(apiUrl);
-      const currencyKeys = Object.keys(response.data[0].currencies);
-      const currency = currencyKeys[0]; // example: "USD", "MYR", etc.
-
-      // Include currency in the form data
-      const dataToSend = { ...form, currency };
-
-      await axios.post('http://localhost:8888/api/auth/register', dataToSend);
+      await axios.post('http://localhost:8888/api/auth/register', form);
       alert('Registered! Proceed to login.');
       navigate('/login');
     } catch (err) {
@@ -220,6 +211,7 @@ export default function Register() {
               Login here
             </Link>
           </p>
+          
         </div>
       </div>
     </div>

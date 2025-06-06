@@ -8,6 +8,7 @@ function CountryDetail() {
   const { countryName } = useParams();
   const [user, setUser] = useState({username: '', });
   const [country, setCountry] = useState(null);
+  const [weather, setWeather] = useState(null);
   const [attractions, setAttractions] = useState([]);
   const [error, setError] = useState(null);
 
@@ -24,11 +25,18 @@ function CountryDetail() {
           setUser(profileRes.data);
         }
 
-        // Fetch country by full name
+        // Fetch country 
         const countryRes = await axios.get(
           `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`
         );
         setCountry(countryRes.data[0]);
+
+        // Fetch weather
+        const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
+        const weatherRes = await axios.get(
+          `http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
+        );
+        setWeather(weatherRes.data);
 
         // Fetch country attractions
         const attractionRes = await axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
@@ -91,24 +99,70 @@ function CountryDetail() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="page-container">
       <Header username={user?.username} />
-      <Link to="/" className='back-link'>← Back to Home</Link>
-      <div style={{ textAlign:'center' }}>
-        <h2>{country.name.common}</h2>
-        <img
-            src={country.flags.svg || country.flags.png}
-            alt={`${country.name.common} flag`}
-            style={{ width: '200px', borderRadius: '10px', marginBottom: '1rem' }}
-        />
-        <p><strong>Region:</strong> {region}</p>
-        <p><strong>Capital:</strong> {capital}</p>
-        <p><strong>Languages:</strong> {languages}</p>
-        <p><strong>Translations:</strong> {translations}</p>
-        <p><strong>Currency:</strong> {currencies}</p>
+      <main style={{ flex: 1, padding: '1rem' }}>
+        <Link to="/" className="back-link">← Back to Home</Link>
 
+        {/* Country Info + Current Weather */}
+        <div className="row row-top">
+          {/* Country Info */}
+          <div className="column info">
+            <h2>{country.name.common}</h2>
+            <img
+              src={country.flags.svg || country.flags.png}
+              alt={`${country.name.common} flag`}
+              className="country-flag"
+            />
+            <p><strong>Region:</strong> {region}</p>
+            <p><strong>Capital:</strong> {capital}</p>
+            <p><strong>Languages:</strong> {languages}</p>
+            <p><strong>Translations:</strong> {translations}</p>
+            <p><strong>Currency:</strong> {currencies}</p>
+          </div>
+
+          {/* Weather Info */}
+          {weather && (
+            <div className="column weather-info">
+              <h3>Current Weather in {weather.location.country}</h3>
+              <p><strong>Local Time:</strong> {weather.location.localtime}</p>
+              <p>
+                {weather.current.condition.text}
+                <img
+                  src={`https:${weather.current.condition.icon}`}
+                  alt={weather.current.condition.text}
+                  className="weather-icon"
+                />
+              </p>
+              <p><strong>Temperature:</strong> {weather.current.temp_c} °C</p>
+              <p><strong>Feels Like:</strong> {weather.current.feelslike_c} °C</p>
+              <p><strong>Humidity:</strong> {weather.current.humidity} %</p>
+              <p><strong>Wind:</strong> {weather.current.wind_kph} kph ({weather.current.wind_dir})</p>
+            </div>
+          )}
+        </div>
+
+        {/* 7-Day Forecast */}
+        {weather && (
+          <div className="row forecast-row">
+            <h4 className="forecast-title">7-Day Forecast</h4>
+            <div className="forecast-grid">
+              {weather.forecast.forecastday.map((day, index) => (
+                <div key={index} className="forecast-card">
+                  <p><strong>{day.date}</strong></p>
+                  <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
+                  <p>{day.day.condition.text}</p>
+                  <p>Max: {day.day.maxtemp_c}°C</p>
+                  <p>Min: {day.day.mintemp_c}°C</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Attractions */}
         {attractions.length > 0 && (
-          <div style={{ marginTop: '3rem' }}>
+          <div style={{ padding: '2rem' }}>
             <h3 style={{ textAlign: 'center' }}>Top Attractions in {countryName}</h3>
             <div className="attractions-grid">
               {attractions.map((sight, index) => (
@@ -121,7 +175,6 @@ function CountryDetail() {
                   <p><strong>Rating:</strong> {sight.rating ?? 'N/A'} / 5</p>
                   <p><strong>Reviews:</strong> {sight.reviews ?? 'N/A'}</p>
                   <p><strong>Price:</strong> {sight.price ?? 'N/A'}</p>
-
                   <button
                     type="button"
                     className="add-button"
@@ -135,7 +188,7 @@ function CountryDetail() {
             </div>
           </div>
         )}
-      </div>
+      </main>
       <Footer />
     </div>
   );

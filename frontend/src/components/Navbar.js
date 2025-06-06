@@ -27,12 +27,6 @@ export default function Navbar() {
             Attractions
           </Link>
           <Link
-            to="/weather"
-            className={`navbar-link ${location.pathname === '/weather' ? 'active' : ''}`}
-          >
-            Weather
-          </Link>
-          <Link
             to="/favourite"
             className={`navbar-link ${location.pathname === '/favourite' ? 'active' : ''}`}
           >

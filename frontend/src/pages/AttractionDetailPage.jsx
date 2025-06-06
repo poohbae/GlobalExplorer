@@ -8,7 +8,8 @@ function AttractionDetail() {
   const { countryName, attractionName } = useParams();
   const [user, setUser] = useState({username: '',});
   const [attraction, setAttraction] = useState([]);
-const [countryFlag, setCountryFlag] = useState('');
+  const [countryFlag, setCountryFlag] = useState('');
+  const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -42,6 +43,13 @@ const [countryFlag, setCountryFlag] = useState('');
         if (countryRes.data && countryRes.data[0]?.flags?.png) {
           setCountryFlag(countryRes.data[0].flags.png);
         }
+
+        // Fetch weather
+        const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
+        const weatherRes = await axios.get(
+          `http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
+        );
+        setWeather(weatherRes.data);
       } catch (err) {
         setError('Attraction details not available');
       }
@@ -65,7 +73,7 @@ const [countryFlag, setCountryFlag] = useState('');
       const payload = {
         userID,
         countryName: countryName,
-        countryFlag: country.flags.svg || country.flags.png || '',
+        countryFlag: countryFlag || '',
         attractionName: sight.title,
         attractionDescription: sight.description || 'No description',
         attractionRating: sight.rating?.toString() || 'N/A',
@@ -80,47 +88,80 @@ const [countryFlag, setCountryFlag] = useState('');
       });
       alert('Attraction added to favourites!');
     } catch (err) {
-      console.error(err);
-      alert('Failed to add favourite');
+      if (err.response?.status === 409) {
+        alert('This attraction is already in your favourites.');
+      } else {
+        console.error(err);
+        alert('Failed to add favourite');
+      }
     }
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header username={user?.username} />
-      <Link to={`/attraction`} className="back-link">← Back to Home</Link>
-      <div style={{ textAlign: 'center' }}>
-        <h2>{attraction.title}</h2>
-        {attraction.thumbnail && (
-          <img
-            src={attraction.thumbnail}
-            alt={attraction.title}
-            style={{ width: '300px', borderRadius: '10px', marginBottom: '1rem' }}
-          />
-        )}
-        <p><strong>Description:</strong> {attraction.description || 'No description'}</p>
-        <p><strong>Rating:</strong> {attraction.rating ?? 'N/A'} / 5</p>
-        <p><strong>Reviews:</strong> {attraction.reviews ?? 'N/A'}</p>
-        <p><strong>Price:</strong> {attraction.price ?? 'N/A'}</p>
-        <p>
-          <strong>Country:</strong> {countryName}
-          {countryFlag && (
-            <img
-              src={countryFlag}
-              alt={`${countryName} flag`}
-              style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
-            />
-          )}
-        </p>
-        <button
-            type="button"
-            className="add-button"
-            style={{ marginTop: 10 }}
-            onClick={() => handleAddToFavourite(attraction)}
-            >
-            Add to Favourite
-        </button>
-      </div>
+
+      <main style={{ flex: 1, padding: '1rem' }}>
+        <Link to={`/attraction`} className="back-link">← Back to Home</Link>
+
+        {/* Attraction Info + Current Weather */}
+          <div className="row row-top">
+            {/* Attraction Info */}
+            <div className="column info">
+              <h2>{attraction.title}</h2>
+                {attraction.thumbnail && (
+                  <img
+                    src={attraction.thumbnail}
+                    alt={attraction.title}
+                    style={{ width: '300px', borderRadius: '10px', marginBottom: '1rem' }}
+                  />
+                )}
+                <p><strong>Description:</strong> {attraction.description || 'No description'}</p>
+                <p><strong>Rating:</strong> {attraction.rating ?? 'N/A'} / 5</p>
+                <p><strong>Reviews:</strong> {attraction.reviews ?? 'N/A'}</p>
+                <p><strong>Price:</strong> {attraction.price ?? 'N/A'}</p>
+                <p>
+                  <strong>Country:</strong> {countryName}
+                  {countryFlag && (
+                    <img
+                      src={countryFlag}
+                      alt={`${countryName} flag`}
+                      style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
+                    />
+                  )}
+                </p>  
+            </div>
+
+            {/* 7-Day Forecast */}
+            {weather && (
+              <div className="row forecast-row">
+                <h4 className="forecast-title">7-Day Forecast</h4>
+                <div className="forecast-grid">
+                  {weather.forecast.forecastday.map((day, index) => (
+                    <div key={index} className="forecast-card">
+                      <p><strong>{day.date}</strong></p>
+                      <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
+                      <p>{day.day.condition.text}</p>
+                      <p>Max: {day.day.maxtemp_c}°C</p>
+                      <p>Min: {day.day.mintemp_c}°C</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <button
+                type="button"
+                className="add-button"
+                style={{ marginTop: 10 }}
+                onClick={() => handleAddToFavourite(attraction)}
+                >
+                Add to Favourite
+            </button>
+          </div>
+        </main>
       <Footer />
     </div>
   );

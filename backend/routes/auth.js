@@ -11,7 +11,7 @@ const Favourite = require('../models/Favourite');
 router.post('/register', async (req, res) => {
   const { username, email, country, password, confirmPassword } = req.body;
 
-  if (!username || !email || !country || !currency || !password || !confirmPassword) {
+  if (!username || !email || !country || !password || !confirmPassword) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Call country attractions API
-const attractionApiKey = '2631d090e9891dfbd03633f73578e7818c829426f633cf41eeaa54b8bfc38085';
+const attractionApiKey = '68aff6cba7b2f5aa3aff372f06392c7e12510f0d030c9e20e0df62d2510cb6c6';
 
 // Utility function to add a delay
 function sleep(ms) {
@@ -87,7 +87,7 @@ router.get('/api/auth/attractions', async (req, res) => {
   }
 });
 
-// Add country attraction to database
+// Add attraction to database
 router.post('/addToFavourite', verifyToken, async (req, res) => {
   const { userID, countryName, countryFlag, attractionName, attractionDescription,
     attractionRating, attractionReview, attractionPrice, attractionThumbnail
@@ -98,6 +98,17 @@ router.post('/addToFavourite', verifyToken, async (req, res) => {
   }
 
   try {
+    // Check if the attraction already exists for the user
+    const existing = await Favourite.findOne({
+      userID: req.user.id,
+      attractionName,
+      countryName
+    });
+
+    if (existing) {
+      return res.status(409).json({ message: 'Attraction already in favourites' });
+    }
+
     const favourite = new Favourite({
       userID: req.user.id, countryName, countryFlag, attractionName, attractionDescription,
       attractionRating, attractionReview, attractionPrice, attractionThumbnail
@@ -126,6 +137,30 @@ router.get('/favourite', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// Delete attraction from database
+router.delete('/favourite/:id', verifyToken, async (req, res) => {
+  try {
+    const favourite = await Favourite.findById(req.params.id);
+
+    if (!favourite) {
+      return res.status(404).json({ error: 'Favourite not found' });
+    }
+
+    // Ensure the user owns the favourite
+    if (favourite.userID.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to delete this item' });
+    }
+
+    await favourite.deleteOne();
+
+    res.json({ message: 'Favourite deleted successfully' });
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 // Get user details
 router.get('/profile', verifyToken, async (req, res) => {
@@ -160,7 +195,7 @@ router.put('/profile', verifyToken, async (req, res) => {
       updateFields.password = hashedPassword;
     }
 
-    // Update user
+    // Handle user update
     const user = await User.findByIdAndUpdate(req.user.id, updateFields, {
       new: true
     }).select('-password');

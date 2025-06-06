@@ -76,6 +76,7 @@ function AttractionPage() {
       <Header username={user?.username} />
       <Navbar />
 
+      {/* Search Bar */}
       <main style={{ flex: 1, padding: '1rem' }}>
         <div className="search-bar-container">
           <input
@@ -87,6 +88,7 @@ function AttractionPage() {
           />
         </div>
 
+        {/* Attractions */}
         <h2 style={{ textAlign: 'center' }}>Attractions to Visit</h2>
           <div className="attractions-grid">
             {filteredAttractions.map((attraction, index) => (
@@ -116,6 +118,7 @@ function AttractionPage() {
             ))}
           </div>    
       </main>
+
       <Footer />
     </div>
   );

@@ -61,6 +61,7 @@ function CountryPage() {
       <Header username={user?.username} />
       <Navbar />
 
+      {/* Search Bar */}
       <main style={{ flex: 1, padding: '1rem' }}>
         <div className="search-bar-container">
           <input
@@ -72,6 +73,7 @@ function CountryPage() {
           />
         </div>
 
+        {/* Countries */}
         <h2 style={{ textAlign: 'center' }}>Countries to Visit</h2>
         <div className="country-grid">
           {filteredCountries.map((country, index) => (

@@ -9,7 +9,6 @@ import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import countryImg from '../images/country.jpg';
 import attractionImg from '../images/attraction.jpg';
-import weatherImg from '../images/weather.jpg';
 
 function HomePage() {
   const [user, setUser] = useState(null);
@@ -72,6 +71,7 @@ function HomePage() {
       <Header username={user?.username} />
       <Navbar />
 
+      {/* Carousel */}
       <main style={{ flex: 1, padding: '1rem' }}>
         <Carousel
           showThumbs={false}
@@ -97,17 +97,10 @@ function HomePage() {
           >
             <button className="carousel-button">Explore by Attractions</button>
           </div>
-
-          <div
-            onClick={() => navigate('/weather')}
-            className="carousel-slide"
-            style={{ backgroundImage: `url(${weatherImg})` }}
-          >
-            <button className="carousel-button">Explore by Weather</button>
-          </div>
         </Carousel>
 
-        <div className='country-container' style={{ marginBottom: '2rem' }} >
+        {/* Countries */}
+        <div className='country-container' style={{ marginTop: '2rem', marginBottom: '2rem' }} >
           <h2 style={{ textAlign: 'center' }}>Top Countries to Visit</h2>
           <div className="country-grid">
             {topCountries.map((country, index) => (
@@ -122,6 +115,7 @@ function HomePage() {
           </div>
         </div>
 
+        {/* Attractions */}
         <div className='country-container'>
           <h2 style={{ textAlign: 'center' }}>Top Attractions to Visit</h2>
           <div className="attractions-grid">

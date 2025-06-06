@@ -13,49 +13,48 @@ function AttractionDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAttraction = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const profileRes = await axios.get('http://localhost:8888/api/auth/profile', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUser(profileRes.data);
-        }
+    const token = localStorage.getItem('token');
 
-        // Fetch attraction
-        const attractionRes = await axios.get(
-          `http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`
-        );
+    axios
+      .get('http://localhost:8888/api/auth/profile', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      })
+      .then(profileRes => {
+        if (profileRes.data) setUser(profileRes.data);
+
+        // Fetch attractions for country
+        return axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
+      })
+      .then(attractionRes => {
         const sight = attractionRes.data.sights.find(
           (s) => s.title.toLowerCase() === decodeURIComponent(attractionName).toLowerCase()
         );
-
         if (!sight) throw new Error('Attraction not found');
         setAttraction(sight);
 
-        // Fetch country flag from restcountries API
-        const countryRes = await axios.get(
+        // Fetch country flag
+        return axios.get(
           `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fields=flags`
         );
+      })
+      .then(countryRes => {
         if (countryRes.data && countryRes.data[0]?.flags?.png) {
           setCountryFlag(countryRes.data[0].flags.png);
         }
 
-        // Fetch weather
+        // Fetch weather data
         const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
-        const weatherRes = await axios.get(
+        return axios.get(
           `http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
         );
+      })
+      .then(weatherRes => {
         setWeather(weatherRes.data);
-      } catch (err) {
+      })
+      .catch(err => {
         setError('Attraction details not available');
-      }
-    };
-
-    fetchAttraction();
+        console.error(err);
+      });
   }, [countryName, attractionName]);
 
   if (error) return <p>{error}</p>;

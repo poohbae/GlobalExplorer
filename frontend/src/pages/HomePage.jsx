@@ -31,39 +31,45 @@ function HomePage() {
   }, [navigate]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch all countries
-        const countryRes = await axios.get('https://restcountries.com/v3.1/all?fields=name,flags');
+    axios.get('https://restcountries.com/v3.1/all?fields=name,flags')
+      .then(countryRes => {
         const allCountries = countryRes.data.map(country => ({
           name: country.name.common,
           flag: country.flags?.png || ''
         }));
 
-        // Randomly select 10 countries
         const shuffled = allCountries.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 10);
         setTopCountries(selected);
 
-        // Fetch top attractions for each selected country
-        const allAttractions = [];
+        let allAttractions = [];
 
-        for (const country of selected) {
-          const res = await axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(country.name)}`);
-          const topSights = res.data.sights?.slice(0, 1) || [];
-          allAttractions.push(...topSights.map(sight => ({
-            ...sight,
-            country: country.name
-          })));
-        }
+        // Recursive function to chain the requests one by one
+        const fetchAttractionForIndex = (index) => {
+          if (index >= selected.length) {
+            setTopAttractions(allAttractions);
+            return Promise.resolve();
+          }
 
-        setTopAttractions(allAttractions);
-      } catch (error) {
+          return axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(selected[index].name)}`)
+            .then(res => {
+              const topSights = res.data.sights?.slice(0, 1) || [];
+              allAttractions.push(...topSights.map(sight => ({
+                ...sight,
+                country: selected[index].name
+              })));
+            })
+            .catch(err => {
+              console.warn(`Failed to fetch attractions for ${selected[index].name}`, err);
+            })
+            .then(() => fetchAttractionForIndex(index + 1)); // Chain next request
+        };
+
+        return fetchAttractionForIndex(0);
+      })
+      .catch(error => {
         console.error('Failed to fetch countries or attractions:', error);
-      }
-    };
-
-    fetchData();
+      });
   }, []);
 
   return (

@@ -24,30 +24,28 @@ export default function ProfilePage() {
   const [updateDisabled, setUpdateDisabled] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem('token');
 
     axios.get('http://localhost:8888/api/auth/profile', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => {
-        setUser({
-          username: res.data.username,
-          email: res.data.email,
-          country: res.data.country || '',
-        });
-        setInitialCountry(res.data.country || '');
-      })
-      .catch(err => console.error('Failed to load user profile:', err))
-      .finally(() => setLoading(false));
+    .then(res => {
+      setUser({
+        username: res.data.username,
+        email: res.data.email,
+        country: res.data.country || '',
+      });
+      setInitialCountry(res.data.country || '');
 
-      axios.get('https://restcountries.com/v3.1/all?fields=name')
-        .then(res => {
-          const countryNames = res.data.map(c => c.name.common).sort((a, b) => a.localeCompare(b));
-          setCountries(countryNames);
-        })
-        .catch(err => console.error('Failed to fetch countries:', err));
+      // Chain: fetch countries after profile loaded
+      return axios.get('https://restcountries.com/v3.1/all?fields=name');
+    })
+    .then(res => {
+      const countryNames = res.data.map(c => c.name.common).sort((a, b) => a.localeCompare(b));
+      setCountries(countryNames);
+    })
+    .catch(err => console.error('Failed to load data:', err))
+    .finally(() => setLoading(false));
   }, []);
 
   const handleCountryChange = e => {

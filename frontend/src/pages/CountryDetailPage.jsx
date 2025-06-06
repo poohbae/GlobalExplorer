@@ -13,41 +13,32 @@ function CountryDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCountry = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const profileRes = await axios.get('http://localhost:8888/api/auth/profile', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-            });
-          setUser(profileRes.data);
-        }
+    const token = localStorage.getItem('token');
 
-        // Fetch country 
-        const countryRes = await axios.get(
-          `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`
-        );
+    (token ? axios.get('http://localhost:8888/api/auth/profile', { headers: { Authorization: `Bearer ${token}` } }) : Promise.resolve(null))
+      .then(profileRes => {
+        if (profileRes) setUser(profileRes.data);
+
+        return axios.get(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`);
+      })
+      .then(countryRes => {
         setCountry(countryRes.data[0]);
 
-        // Fetch weather
         const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
-        const weatherRes = await axios.get(
-          `http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
-        );
+        return axios.get(`http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`);
+      })
+      .then(weatherRes => {
         setWeather(weatherRes.data);
 
-        // Fetch country attractions
-        const attractionRes = await axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
-        const topSights = attractionRes.data.sights?.slice(0, 5) || []; // Limit to 5
+        return axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
+      })
+      .then(attractionRes => {
+        const topSights = attractionRes.data.sights?.slice(0, 5) || [];
         setAttractions(topSights);
-      } catch (err) {
+      })
+      .catch(err => {
         setError('Country not found');
-      }
-    };
-
-    fetchCountry();
+      });
   }, [countryName]);
 
   if (error) return <p>{error}</p>;

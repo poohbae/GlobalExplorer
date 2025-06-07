@@ -75,7 +75,7 @@ function AttractionDetail() {
   if (error) return <p>{error}</p>;
   if (!attraction) return <p style={{ padding: '1rem' }}>Loading attraction details...</p>;
 
-  const handleAddToFavourite = async (sight) => {
+  const handleAddToFavourite = async (attraction) => {
     try {
       const userID = localStorage.getItem('userID');
 
@@ -88,11 +88,11 @@ function AttractionDetail() {
         userID,
         countryName: countryName,
         countryFlag: countryFlag || '',
-        attractionName: sight.title,
-        attractionDescription: sight.description || 'No description',
-        attractionRating: sight.rating?.toString() || 'N/A',
-        attractionReview: sight.reviews?.toString() || 'N/A',
-        attractionPrice: sight.price || 'N/A'
+        attractionTitle: attraction.title,
+        attractionDescription: attraction.description || 'No description',
+        attractionRating: attraction.rating?.toString() || 'N/A',
+        attractionReview: attraction.reviews?.toString() || 'N/A',
+        attractionPrice: attraction.price || 'N/A'
       };
 
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addToFavourite`, payload, {

@@ -78,13 +78,13 @@ function FavouritePage() {
               <div
                 key={index}
                 className="attraction-card"
-                onClick={() => navigate(`/attractionDetail/${encodeURIComponent(favourite.countryName)}/${encodeURIComponent(favourite.attractionName)}`)}
+                onClick={() => navigate(`/attractionDetail/${encodeURIComponent(favourite.countryName)}/${encodeURIComponent(favourite.attractionTitle)}`)}
                 style={{ cursor: 'pointer' }}
               >
                 {favourite.attractionThumbnail && (
-                  <img src={favourite.attractionThumbnail} alt={favourite.attractionName} className="attraction-img" />
+                  <img src={favourite.attractionThumbnail} alt={favourite.attractionTitle} className="attraction-img" />
                 )}
-                <h4>{favourite.attractionName}</h4>
+                <h4>{favourite.attractionTitle}</h4>
                 <p>{favourite.attractionDescription || 'No description available'}</p>
                 <p><strong>Rating:</strong> {favourite.attractionRating ?? 'N/A'} / 5</p>
                 <p><strong>Reviews:</strong> {favourite.attractionReview ?? 'N/A'}</p>

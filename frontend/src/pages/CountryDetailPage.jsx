@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -11,6 +12,7 @@ function CountryDetail() {
   const [weather, setWeather] = useState(null);
   const [attractions, setAttractions] = useState([]);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -72,7 +74,7 @@ function CountryDetail() {
   ? Object.keys(country.currencies).join(', ')
   : 'N/A';
 
-  const handleAddToFavourite = async (sight) => {
+  const handleAddToFavourite = async (attraction) => {
     try {
       const userID = localStorage.getItem('userID');
 
@@ -85,12 +87,12 @@ function CountryDetail() {
         userID,
         countryName: countryName,
         countryFlag: country.flags.svg || country.flags.png || '',
-        attractionName: sight.title,
-        attractionDescription: sight.description || 'No description',
-        attractionRating: sight.rating?.toString() || 'N/A',
-        attractionReview: sight.reviews?.toString() || 'N/A',
-        attractionPrice: sight.price || 'N/A',
-        attractionThumbnail: sight.thumbnail || 'N/A'
+        attractionTitle: attraction.title,
+        attractionDescription: attraction.description || 'No description',
+        attractionRating: attraction.rating?.toString() || 'N/A',
+        attractionReview: attraction.reviews?.toString() || 'N/A',
+        attractionPrice: attraction.price || 'N/A',
+        attractionThumbnail: attraction.thumbnail || 'N/A'
       };
 
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addToFavourite`, payload, {
@@ -172,21 +174,21 @@ function CountryDetail() {
           <div style={{ padding: '2rem' }}>
             <h3 style={{ textAlign: 'center' }}>Top Attractions in {countryName}</h3>
             <div className="attractions-grid">
-              {attractions.map((sight, index) => (
-                <div key={index} className="attraction-card">
-                  {sight.thumbnail && (
-                    <img src={sight.thumbnail} alt={sight.title} className="attraction-img" />
+              {attractions.map((attraction, index) => (
+                <div key={index} className="attraction-card" onClick={() => navigate(`/attractionDetail/${encodeURIComponent(countryName)}/${encodeURIComponent(attraction.title)}`)}>
+                  {attraction.thumbnail && (
+                    <img src={attraction.thumbnail} alt={attraction.title} className="attraction-img" />
                   )}
-                  <h4>{sight.title}</h4>
-                  <p>{sight.description || 'No description available'}</p>
-                  <p><strong>Rating:</strong> {sight.rating ?? 'N/A'} / 5</p>
-                  <p><strong>Reviews:</strong> {sight.reviews ?? 'N/A'}</p>
-                  <p><strong>Price:</strong> {sight.price ?? 'N/A'}</p>
+                  <h4>{attraction.title}</h4>
+                  <p>{attraction.description || 'No description available'}</p>
+                  <p><strong>Rating:</strong> {attraction.rating ?? 'N/A'} / 5</p>
+                  <p><strong>Reviews:</strong> {attraction.reviews ?? 'N/A'}</p>
+                  <p><strong>Price:</strong> {attraction.price ?? 'N/A'}</p>
                   <button
                     type="button"
                     className="add-button"
                     id={`add-fav-${index}`}
-                    onClick={() => handleAddToFavourite(sight, index)}
+                    onClick={() => handleAddToFavourite(attraction, index)}
                   >
                     Add to Favourite
                   </button>

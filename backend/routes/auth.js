@@ -84,11 +84,11 @@ router.get('/api/auth/attractions', async (req, res) => {
 
 // Add attraction to database
 router.post('/addToFavourite', verifyToken, async (req, res) => {
-  const { userID, countryName, countryFlag, attractionName, attractionDescription,
+  const { userID, countryName, countryFlag, attractionTitle, attractionDescription,
     attractionRating, attractionReview, attractionPrice, attractionThumbnail
   } = req.body;
 
-  if (!userID || !countryName || !countryFlag || !attractionName || !attractionDescription || !attractionRating || !attractionReview || !attractionPrice || !attractionThumbnail) {
+  if (!userID || !countryName || !countryFlag || !attractionTitle || !attractionDescription || !attractionRating || !attractionReview || !attractionPrice || !attractionThumbnail) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -96,7 +96,7 @@ router.post('/addToFavourite', verifyToken, async (req, res) => {
     // Check if the attraction already exists for the user
     const existing = await Favourite.findOne({
       userID: req.user.id,
-      attractionName,
+      attractionTitle,
       countryName
     });
 
@@ -105,7 +105,7 @@ router.post('/addToFavourite', verifyToken, async (req, res) => {
     }
 
     const favourite = new Favourite({
-      userID: req.user.id, countryName, countryFlag, attractionName, attractionDescription,
+      userID: req.user.id, countryName, countryFlag, attractionTitle, attractionDescription,
       attractionRating, attractionReview, attractionPrice, attractionThumbnail
     });
 

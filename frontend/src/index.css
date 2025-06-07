@@ -389,3 +389,64 @@ label {
   border-radius: 4px;
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .modal {
+    width: 90%;
+    padding: 30px;
+  }
+
+  .auth-button, .add-button, .delete-button {
+    width: 90%;
+    font-size: 14px;
+  }
+
+  .navbar-container {
+    flex-direction: column;
+    padding: 0 1rem;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .carousel-slide {
+    height: 200px;
+  }
+
+  .search-input {
+    width: 80%;
+    font-size: 14px;
+  }
+
+  .country-card {
+    width: 80%;
+  }
+
+  .attractions-grid {
+    grid-template-columns: 1fr;
+    padding: 0 0.5rem;
+  }
+
+  .row {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .info, .weather-info {
+    margin: 0;
+    text-align: center;
+  }
+
+  .country-flag {
+    width: 100%;
+    min-width: unset;
+    height: auto;
+  }
+
+  .forecast-card {
+    width: 100%;
+    margin: 5px 0;
+  }
+}

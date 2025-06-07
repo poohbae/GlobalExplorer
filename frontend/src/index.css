@@ -136,6 +136,20 @@ label {
   box-sizing: border-box; 
 }
 
+.logo {
+  height: 80px;
+  cursor: pointer;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.header-title {
+  font-weight: bold;
+  font-size: 2rem;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
 .navbar {
   display: flex;
   background-color: #404C63;
@@ -390,43 +404,68 @@ label {
   cursor: pointer;
 }
 
-@media (max-width: 768px) {
-  .modal {
-    width: 90%;
-    padding: 30px;
+/* Mobile adjustments for screens up to 600px wide */
+@media (max-width: 600px) {
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    min-height: auto;
   }
 
-  .auth-button, .add-button, .delete-button {
-    width: 90%;
-    font-size: 14px;
+  .logo {
+    height: 60px;
+    margin: 0 0 10px 0;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+    margin: 0 0 10px 0;
   }
 
   .navbar-container {
     flex-direction: column;
-    padding: 0 1rem;
+    padding: 1rem;
   }
 
   .navbar-links {
     flex-direction: column;
     align-items: flex-start;
+    width: 100%;
+  }
+
+  .navbar-link {
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .modal {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .auth-button,
+  .add-button,
+  .delete-button {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 90%;
+  }
+
+  .country-card {
+    width: 90%;
   }
 
   .carousel-slide {
     height: 200px;
   }
 
-  .search-input {
-    width: 80%;
-    font-size: 14px;
-  }
-
-  .country-card {
-    width: 80%;
-  }
-
-  .attractions-grid {
-    grid-template-columns: 1fr;
-    padding: 0 0.5rem;
+  .carousel-slide .carousel-button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
   }
 
   .row {
@@ -434,19 +473,25 @@ label {
     padding: 1rem;
   }
 
-  .info, .weather-info {
+  .info,
+  .weather-info {
     margin: 0;
-    text-align: center;
   }
 
-  .country-flag {
-    width: 100%;
-    min-width: unset;
-    height: auto;
+  .attractions-grid {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  .attraction-card {
+    margin: 1rem 0;
+  }
+
+  .forecast-grid {
+    flex-direction: column;
   }
 
   .forecast-card {
-    width: 100%;
-    margin: 5px 0;
+    width: 80%;
   }
 }

@@ -16,10 +16,10 @@ export default function Header({username}) {
       <nav className='header'>
         <div>
           <Link to="/">
-            <img src={logo} alt="Logo" style={{ height: '80px', cursor: 'pointer', marginLeft: '40px', marginRight: '40px' }} />
+            <img src={logo} alt="Logo" className='logo' />
           </Link>
         </div>
-        <div style={{ fontWeight: 'bold', fontSize: '2rem', marginLeft: '40px', marginRight: '40px' }}>
+        <div className='header-title'>
           {`Welcome to Global Explorer${username ? `, ${username}` : ''}`}
         </div>
         <div>

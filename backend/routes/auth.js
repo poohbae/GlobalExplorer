@@ -55,7 +55,7 @@ router.post('/login', async (req, res) => {
   res.json({ token, user: { id: user._id, username: user.username } });
 });
 
-// Call country attractions API
+// Call attractions API
 const attractionApiKey = '68aff6cba7b2f5aa3aff372f06392c7e12510f0d030c9e20e0df62d2510cb6c6';
 
 router.get('/api/auth/attractions', async (req, res) => {
@@ -81,7 +81,6 @@ router.get('/api/auth/attractions', async (req, res) => {
     res.json({ sights: [] });
   }
 });
-
 
 // Add attraction to database
 router.post('/addToFavourite', verifyToken, async (req, res) => {

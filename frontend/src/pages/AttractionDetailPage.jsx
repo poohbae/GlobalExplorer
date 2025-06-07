@@ -15,22 +15,30 @@ function AttractionDetail() {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/auth/profile`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      })
+    (token
+      ? axios.get(`${process.env.REACT_APP_API_URL}/api/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      : Promise.resolve(null)
+    )
       .then(profileRes => {
-        if (profileRes.data) setUser(profileRes.data);
+        if (profileRes) setUser(profileRes.data);
 
         // Fetch attractions for country
         return axios.get(`${process.env.REACT_APP_API_URL}/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
       })
       .then(attractionRes => {
-        const sight = attractionRes.data.sights.find(
+        const sight = attractionRes.data.sights?.find(
           (s) => s.title.toLowerCase() === decodeURIComponent(attractionName).toLowerCase()
         );
-        if (!sight) throw new Error('Attraction not found');
-        setAttraction(sight);
+
+        if (sight) {
+          setAttraction(sight);
+        } else {
+          // Handle missing attraction gracefully
+          setAttraction(null);
+          throw new Error('Attraction not found');
+        }
 
         // Fetch country flag
         return axios.get(
@@ -40,20 +48,27 @@ function AttractionDetail() {
       .then(countryRes => {
         if (countryRes.data && countryRes.data[0]?.flags?.png) {
           setCountryFlag(countryRes.data[0].flags.png);
+        } else {
+          setCountryFlag(null);
         }
 
         // Fetch weather data
         const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
         return axios.get(
-          `http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
+          `https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
         );
       })
       .then(weatherRes => {
         setWeather(weatherRes.data);
       })
       .catch(err => {
-        setError('Attraction details not available');
         console.error(err);
+        setError('Attraction details not available or failed to load');
+
+        // Reset data to safe fallback states
+        setAttraction(null);
+        setCountryFlag(null);
+        setWeather(null);
       });
   }, [countryName, attractionName]);
 
@@ -104,50 +119,52 @@ function AttractionDetail() {
         <Link to={`/attraction`} className="back-link">← Back to Home</Link>
 
         {/* Attraction Info + Current Weather */}
-          <div className="row row-top">
-            {/* Attraction Info */}
-            <div className="column info">
-              <h2>{attraction.title}</h2>
-                {attraction.thumbnail && (
-                  <img
-                    src={attraction.thumbnail}
-                    alt={attraction.title}
-                    style={{ width: '300px', borderRadius: '10px', marginBottom: '1rem' }}
-                  />
-                )}
-                <p><strong>Description:</strong> {attraction.description || 'No description'}</p>
-                <p><strong>Rating:</strong> {attraction.rating ?? 'N/A'} / 5</p>
-                <p><strong>Reviews:</strong> {attraction.reviews ?? 'N/A'}</p>
-                <p><strong>Price:</strong> {attraction.price ?? 'N/A'}</p>
-                <p>
-                  <strong>Country:</strong> {countryName}
-                  {countryFlag && (
-                    <img
-                      src={countryFlag}
-                      alt={`${countryName} flag`}
-                      style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
-                    />
-                  )}
-                </p>  
-            </div>
+        <div className="row row-top">
+          {/* Attraction Info */}
+          <div className="column info">
+            <h2>{attraction?.title || 'Attraction not found'}</h2>
 
-            {/* 7-Day Forecast */}
-            {weather && (
-              <div className="row forecast-row">
-                <h4 className="forecast-title">7-Day Forecast</h4>
-                <div className="forecast-grid">
-                  {weather.forecast.forecastday.map((day, index) => (
-                    <div key={index} className="forecast-card">
-                      <p><strong>{day.date}</strong></p>
-                      <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
-                      <p>{day.day.condition.text}</p>
-                      <p>Max: {day.day.maxtemp_c}°C</p>
-                      <p>Min: {day.day.mintemp_c}°C</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {attraction?.thumbnail && (
+              <img
+                src={attraction.thumbnail}
+                alt={attraction.title}
+                style={{ width: '300px', borderRadius: '10px', marginBottom: '1rem' }}
+              />
             )}
+
+            <p><strong>Description:</strong> {attraction?.description || 'No description'}</p>
+            <p><strong>Rating:</strong> {attraction?.rating ?? 'N/A'} / 5</p>
+            <p><strong>Reviews:</strong> {attraction?.reviews ?? 'N/A'}</p>
+            <p><strong>Price:</strong> {attraction?.price ?? 'N/A'}</p>
+            <p>
+              <strong>Country:</strong> {countryName}
+              {countryFlag && (
+                <img
+                  src={countryFlag}
+                  alt={`${countryName} flag`}
+                  style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
+                />
+              )}
+            </p>  
+          </div>      
+
+          {/* 7-Day Forecast */}
+          {weather && (
+            <div className="row forecast-row">
+              <h4 className="forecast-title">7-Day Forecast</h4>
+              <div className="forecast-grid">
+                {weather.forecast.forecastday.map((day, index) => (
+                  <div key={index} className="forecast-card">
+                    <p><strong>{day.date}</strong></p>
+                    <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
+                    <p>{day.day.condition.text}</p>
+                    <p>Max: {day.day.maxtemp_c}°C</p>
+                    <p>Min: {day.day.mintemp_c}°C</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           </div>
 
           <div style={{ textAlign: 'center' }}>

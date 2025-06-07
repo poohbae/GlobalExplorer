@@ -15,29 +15,45 @@ function CountryDetail() {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    (token ? axios.get(`${process.env.REACT_APP_API_URL}/api/auth/profile`, { headers: { Authorization: `Bearer ${token}` } }) : Promise.resolve(null))
+    (token
+      ? axios.get(`${process.env.REACT_APP_API_URL}/api/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      : Promise.resolve(null)
+    )
       .then(profileRes => {
         if (profileRes) setUser(profileRes.data);
 
-        return axios.get(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`);
+        return axios.get(
+          `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true&fields=name,region,capital,languages,translations,currencies,flags`
+        );
       })
       .then(countryRes => {
         setCountry(countryRes.data[0]);
 
         const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
-        return axios.get(`http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`);
+        return axios.get(
+          `http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
+        );
       })
       .then(weatherRes => {
         setWeather(weatherRes.data);
 
-        return axios.get(`${process.env.REACT_APP_API_URL}/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
-      })
-      .then(attractionRes => {
-        const topSights = attractionRes.data.sights?.slice(0, 5) || [];
-        setAttractions(topSights);
+        // Separate return for attractions — allow failure without breaking others
+        return axios
+          .get(`${process.env.REACT_APP_API_URL}/api/auth/attractions?country=${encodeURIComponent(countryName)}`)
+          .then(attractionRes => {
+            const topSights = attractionRes.data.sights?.slice(0, 5) || [];
+            setAttractions(topSights);
+          })
+          .catch(err => {
+            console.warn('Attraction API failed:', err.message);
+            setAttractions([]); // Still set to avoid undefined
+          });
       })
       .catch(err => {
-        setError('Country not found');
+        console.error(err);
+        setError('Country not found or failed to load');
       });
   }, [countryName]);
 

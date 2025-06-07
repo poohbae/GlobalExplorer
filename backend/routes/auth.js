@@ -58,18 +58,10 @@ router.post('/login', async (req, res) => {
 // Call country attractions API
 const attractionApiKey = '68aff6cba7b2f5aa3aff372f06392c7e12510f0d030c9e20e0df62d2510cb6c6';
 
-// Utility function to add a delay
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 router.get('/api/auth/attractions', async (req, res) => {
   const country = req.query.country;
 
   try {
-    // Delay before making the SerpAPI request
-    await sleep(2000); // 2 seconds delay
-
     const response = await axios.get('https://serpapi.com/search.json', {
       params: {
         engine: 'google',
@@ -80,12 +72,16 @@ router.get('/api/auth/attractions', async (req, res) => {
     });
 
     const sights = response.data?.top_sights?.sights || [];
-    res.json({ sights }); // Return only relevant data
+    res.json({ sights });
+
   } catch (err) {
     console.error('Error fetching from SerpAPI:', err.message);
-    res.status(500).json({ error: 'Failed to fetch attractions' });
+
+    // Return empty sights array with 200 status (successful response)
+    res.json({ sights: [] });
   }
 });
+
 
 // Add attraction to database
 router.post('/addToFavourite', verifyToken, async (req, res) => {

@@ -71,7 +71,7 @@ function HomePage() {
         console.error('Failed to fetch countries or attractions:', error);
       });
   }, []);
-
+ 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header username={user?.username} />

@@ -33,7 +33,7 @@ function CountryDetail() {
 
         const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
         return axios.get(
-          `http://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
+          `https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
         );
       })
       .then(weatherRes => {

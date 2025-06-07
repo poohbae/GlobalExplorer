@@ -16,14 +16,14 @@ function AttractionDetail() {
     const token = localStorage.getItem('token');
 
     axios
-      .get('http://localhost:8888/api/auth/profile', {
+      .get(`${process.env.REACT_APP_API_URL}/api/auth/profile`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       })
       .then(profileRes => {
         if (profileRes.data) setUser(profileRes.data);
 
         // Fetch attractions for country
-        return axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
+        return axios.get(`${process.env.REACT_APP_API_URL}/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
       })
       .then(attractionRes => {
         const sight = attractionRes.data.sights.find(
@@ -80,7 +80,7 @@ function AttractionDetail() {
         attractionPrice: sight.price || 'N/A'
       };
 
-      await axios.post('http://localhost:8888/api/auth/addToFavourite', payload, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addToFavourite`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

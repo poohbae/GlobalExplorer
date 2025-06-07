@@ -29,7 +29,7 @@ function FavouritePage() {
     const fetchFavourites = async () => {
         try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:8888/api/auth/favourite', {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/favourite`, {
             headers: {
             Authorization: `Bearer ${token}`
             }
@@ -49,7 +49,7 @@ function FavouritePage() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8888/api/auth/favourite/${favourite._id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/auth/favourite/${favourite._id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

@@ -51,7 +51,7 @@ function HomePage() {
             return Promise.resolve();
           }
 
-          return axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(selected[index].name)}`)
+          return axios.get(`${process.env.REACT_APP_API_URL}/api/auth/attractions?country=${encodeURIComponent(selected[index].name)}`)
             .then(res => {
               const topSights = res.data.sights?.slice(0, 1) || [];
               allAttractions.push(...topSights.map(sight => ({

@@ -15,7 +15,7 @@ function CountryDetail() {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    (token ? axios.get('http://localhost:8888/api/auth/profile', { headers: { Authorization: `Bearer ${token}` } }) : Promise.resolve(null))
+    (token ? axios.get(`${process.env.REACT_APP_API_URL}/api/auth/profile`, { headers: { Authorization: `Bearer ${token}` } }) : Promise.resolve(null))
       .then(profileRes => {
         if (profileRes) setUser(profileRes.data);
 
@@ -30,7 +30,7 @@ function CountryDetail() {
       .then(weatherRes => {
         setWeather(weatherRes.data);
 
-        return axios.get(`http://localhost:8888/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
+        return axios.get(`${process.env.REACT_APP_API_URL}/api/auth/attractions?country=${encodeURIComponent(countryName)}`);
       })
       .then(attractionRes => {
         const topSights = attractionRes.data.sights?.slice(0, 5) || [];
@@ -77,7 +77,7 @@ function CountryDetail() {
         attractionThumbnail: sight.thumbnail || 'N/A'
       };
 
-      await axios.post('http://localhost:8888/api/auth/addToFavourite', payload, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addToFavourite`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

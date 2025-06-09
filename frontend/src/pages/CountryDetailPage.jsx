@@ -162,11 +162,11 @@ function CountryDetail() {
         weatherDate: day.date,
         weatherConditionText: day.day.condition.text,
         weatherConditionIcon: day.day.condition.icon,
-        weatherTemperature: day.day.avgtemp_c.toString(),
+        weatherAvgTemp: day.day.avgtemp_c.toString(),
+        weatherMaxTemp: day.day.maxtemp_c.toString(),
+        weatherMinTemp: day.day.mintemp_c.toString(),
         weatherHumidity: day.day.avghumidity.toString(),
-        weatherWind: day.day.maxwind_kph.toString(),
-        weatherMax: day.day.maxtemp_c.toString(),
-        weatherMin: day.day.mintemp_c.toString()
+        weatherWind: day.day.maxwind_kph.toString()
       };
 
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addWeatherToFavourite`, payload, {
@@ -222,7 +222,7 @@ function CountryDetail() {
           {/* Weather Info */}
           {weather && (
             <div className="column weather-info">
-              <h3>Current Weather in {weather.location.country}</h3>
+              <h3>Current Weather</h3>
               <p><strong>Local Time:</strong> {weather.location.localtime}</p>
               <p>
                 {weather.current.condition.text}
@@ -250,11 +250,11 @@ function CountryDetail() {
                   <p><strong>{day.date}</strong></p>
                   <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
                   <p>{day.day.condition.text}</p>
-                  <p>Avg Temp: {day.day.avgtemp_c}°C</p>
-                  <p>Max: {day.day.maxtemp_c}°C</p>
-                  <p>Min: {day.day.mintemp_c}°C</p>
-                  <p>Avg Humidity: {day.day.avghumidity}%</p>
-                  <p>Wind: {day.day.maxwind_kph} kph</p>      
+                  <p><strong>Avg Temp:</strong> {day.day.avgtemp_c}°C</p>
+                  <p><strong>Max:</strong> {day.day.maxtemp_c}°C</p>
+                  <p><strong>Min:</strong> {day.day.mintemp_c}°C</p>
+                  <p><strong>Avg Humidity:</strong> {day.day.avghumidity}%</p>
+                  <p><strong>Wind:</strong> {day.day.maxwind_kph} kph</p>      
                   <button
                     type="button"
                     className="add-button"

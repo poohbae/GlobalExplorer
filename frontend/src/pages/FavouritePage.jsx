@@ -9,8 +9,40 @@ import Navbar from '../components/Navbar';
 function FavouritePage() {
   const [user, setUser] = useState({username: '',});
   const [countries, setCountries] = useState([]);
+  const [editingCountry, setEditingCountry] = useState(null);
+  const [editCountryForm, setEditCountryForm] = useState({
+    countryName: '',
+    countryRegion: '',
+    countryCapital: '',
+    countryLanguage: '',
+    countryTranslations: '',
+    countryCurrency: ''
+  });
+
   const [attractions, setAttractions] = useState([]);
+  const [editingAttraction, setEditingAttraction] = useState(null);
+  const [editAttractionForm, setEditAttractionForm] = useState({
+    countryName: '',
+    attractionTitle: '',
+    attractionDescription: '',
+    attractionRating: '',
+    attractionReview: '',
+    attractionPrice: ''
+  });
+
   const [weathers, setWeathers] = useState([]);
+  const [editingWeather, setEditingWeather] = useState(null);
+  const [editWeatherForm, setEditWeatherForm] = useState({
+    countryName: '',
+    weatherDate: '',
+    weatherConditionText: '',
+    weatherAvgTemp: '',
+    weatherMaxTemp: '',
+    weatherMinTemp: '',
+    weatherHumidity: '',
+    weatherWind: ''
+  });
+
   const [selectedTab, setSelectedTab] = useState('countries');
   const navigate = useNavigate();
 
@@ -66,7 +98,136 @@ function FavouritePage() {
     fetchWeathers();
   }, []);
 
-  const handleDeleteCountry = async (country, index) => {
+  const handleEditCountry = (country) => {
+    setEditingCountry(country);
+    setEditCountryForm({
+      countryName: country.countryName,
+      countryRegion: country.countryRegion,
+      countryCapital: country.countryCapital,
+      countryLanguage: country.countryLanguage,
+      countryTranslations: country.countryTranslations,
+      countryCurrency: country.countryCurrency
+    });
+  };
+
+  const handleEditAttraction = (attraction) => {
+    setEditingAttraction(attraction);
+    setEditAttractionForm({
+      countryName: attraction.countryName,
+      attractionTitle: attraction.attractionTitle,
+      attractionDescription: attraction.attractionDescription,
+      attractionRating: attraction.attractionRating,
+      attractionReview: attraction.attractionReview,
+      attractionPrice: attraction.attractionPrice
+    });
+  };
+
+  const handleEditWeather = (weather) => {
+    setEditingWeather(weather);
+    setEditWeatherForm({
+      countryName: weather.countryName,
+      weatherDate: weather.weatherDate,
+      weatherConditionText: weather.weatherConditionText,
+      weatherAvgTemp: weather.weatherAvgTemp,
+      weatherMaxTemp: weather.weatherMaxTemp,
+      weatherMinTemp: weather.weatherMinTemp,
+      weatherHumidity: weather.weatherHumidity,
+      weatherWind: weather.weatherWind
+    });
+  };
+
+
+  const handleCountryFormChange = (e) => {
+    setEditCountryForm({
+      ...editCountryForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleAttractionFormChange = (e) => {
+    setEditAttractionForm({
+      ...editAttractionForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleWeatherFormChange = (e) => {
+    setEditWeatherForm({
+      ...editWeatherForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleUpdateCountry = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/auth/favouriteCountry/${editingCountry._id}`,
+        editCountryForm,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      setCountries(prev =>
+        prev.map(c => c._id === editingCountry._id ? res.data : c)
+      );
+
+      alert('Country updated successfully');
+      setEditingCountry(null);
+    } catch (err) {
+      console.error('Failed to update country:', err);
+      alert('Failed to update country');
+    }
+  };
+
+  const handleUpdateAttraction = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/auth/favouriteAttraction/${editingAttraction._id}`,
+        editAttractionForm,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      setAttractions(prev =>
+        prev.map(c => c._id === editingAttraction._id ? res.data : c)
+      );
+
+      alert('Attraction updated successfully');
+      setEditingAttraction(null);
+    } catch (err) {
+      console.error('Failed to update attraction:', err);
+      alert('Failed to update attraction');
+    }
+  };
+
+  const handleUpdateWeather = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/auth/favouriteWeather/${editingWeather._id}`,
+        editWeatherForm,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      setWeathers(prev =>
+        prev.map(w => w._id === editingWeather._id ? res.data : w)
+      );
+
+      alert('Weather updated successfully');
+      setEditingWeather(null);
+    } catch (err) {
+      console.error('Failed to update weather:', err);
+      alert('Failed to update weather');
+    }
+  };
+
+  const handleDeleteCountry = async (country) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this country?');
     if (!confirmDelete) return;
 
@@ -77,7 +238,7 @@ function FavouritePage() {
         }
       });
 
-      setCountries((prev) => prev.filter((_, i) => i !== index));
+      setCountries((prev) => prev.filter((c) => c._id !== country._id)); 
       alert('Country deleted successfully');
     } catch (err) {
       console.error('Failed to delete country:', err);
@@ -85,7 +246,7 @@ function FavouritePage() {
     }
   };
 
-  const handleDeleteAttraction = async (attraction, index) => {
+  const handleDeleteAttraction = async (attraction) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this attraction?');
     if (!confirmDelete) return;
 
@@ -96,7 +257,7 @@ function FavouritePage() {
         }
       });
 
-      setAttractions((prev) => prev.filter((_, i) => i !== index));
+      setAttractions((prev) => prev.filter((a) => a._id !== attraction._id));
       alert('Attraction deleted successfully');
     } catch (err) {
       console.error('Failed to delete attraction:', err);
@@ -104,7 +265,7 @@ function FavouritePage() {
     }
   };
 
-  const handleDeleteWeather = async (weather, index) => {
+  const handleDeleteWeather = async (weather) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this weather?');
     if (!confirmDelete) return;
 
@@ -115,7 +276,7 @@ function FavouritePage() {
         }
       });
 
-      setWeathers((prev) => prev.filter((_, i) => i !== index));
+      setWeathers((prev) => prev.filter((w) => w._id !== weather._id));
       alert('Weather deleted successfully');
     } catch (err) {
       console.error('Failed to delete weather:', err);
@@ -148,8 +309,8 @@ function FavouritePage() {
             <h2 style={{ textAlign: 'center' }}>Favourite Countries</h2>
             <div className="attractions-grid">
               {countries.length === 0 && <p>No favourite countries found.</p>}
-              {countries.map((country, index) => (
-                <div key={index} className="attraction-card"
+              {countries.map((country) => (
+                <div key={country._id} className="attraction-card"
                 onClick={() =>
                     navigate(`/countryDetail/${encodeURIComponent(country.countryName)}`)
                   }
@@ -168,8 +329,22 @@ function FavouritePage() {
                   <div style={{ textAlign: 'center' }}>
                     <button
                       type="button"
+                      className="edit-button"
+                      onClick={(e) => {
+                        e.stopPropagation();  // Prevent parent onClick
+                        handleEditCountry(country);
+                      }}
+                      style={{ marginRight: '10px' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
                       className="delete-button"
-                      onClick={() => handleDeleteCountry(country, index)}
+                      onClick={(e) => {
+                        e.stopPropagation();  // Prevent parent onClick
+                        handleDeleteCountry(country);
+                      }}                
                     >
                       Delete
                     </button>
@@ -186,10 +361,9 @@ function FavouritePage() {
             <h2 style={{ textAlign: 'center' }}>Favourite Attractions</h2>
             <div className="attractions-grid">
               {attractions.length === 0 && <p>No favourite attractions found.</p>}
-              {attractions.map((attraction, index) => (
+              {attractions.map((attraction) => (
                 <div
-                  key={index}
-                  className="attraction-card"
+                  key={attraction._id} className="attraction-card"
                   onClick={() =>
                     navigate(`/attractionDetail/${encodeURIComponent(attraction.countryName)}/${encodeURIComponent(attraction.attractionTitle)}`)
                   }
@@ -198,7 +372,7 @@ function FavouritePage() {
                   {attraction.attractionThumbnail && (
                     <img src={attraction.attractionThumbnail} alt={attraction.attractionTitle} className="attraction-img" />
                   )}
-                  <h4>{attraction.attractionTitle}</h4>
+                  <h2>{attraction.attractionTitle}</h2>
                   <p>{attraction.attractionDescription || 'No description available'}</p>
                   <p><strong>Rating:</strong> {attraction.attractionRating ?? 'N/A'} / 5</p>
                   <p><strong>Reviews:</strong> {attraction.attractionReview ?? 'N/A'}</p>
@@ -211,13 +385,29 @@ function FavouritePage() {
                       style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
                     />
                   </p>
-                  <button
-                    type="button"
-                    className="delete-button"
-                    onClick={() => handleDeleteAttraction(attraction, index)}
-                  >
-                    Delete
-                  </button>
+                  <div style={{ textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      className="edit-button"
+                      onClick={(e) => {
+                        e.stopPropagation();  // Prevent parent onClick
+                        handleEditAttraction(attraction);
+                      }}
+                      style={{ marginRight: '10px' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="delete-button"
+                      onClick={(e) => {
+                        e.stopPropagation();  // Prevent parent onClick
+                        handleDeleteAttraction(attraction);
+                      }}                
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -230,28 +420,167 @@ function FavouritePage() {
             <h2 style={{ textAlign: 'center' }}>Favourite Weathers</h2>
             <div className="attractions-grid">
               {weathers.length === 0 && <p>No favourite weathers found.</p>}
-              {weathers.map((weather, index) => (
-                <div key={index} className="attraction-card">
+              {weathers.map((weather) => (
+                <div key={weather._id}  className="attraction-card">
+                  <h2>{weather.weatherDate}</h2>
                   <p><strong>{weather.countryName}</strong></p>
-                  <p>{weather.weatherDate}</p>
-                  <p><strong>Avg Temp:</strong> {weather.weatherTemperature}°C</p>
-                  <p><strong>Max:</strong> {weather.weatherMax} km/h</p>
-                  <p><strong>Min:</strong> {weather.weatherMin} km/h</p>
+                  <img src={weather.countryFlag} alt={`${weather.countryName} flag`} className="country-flag" />
+                  <p><strong>Avg Temp:</strong> {weather.weatherAvgTemp}°C</p>
+                  <p><strong>Max:</strong> {weather.weatherMaxTemp} km/h</p>
+                  <p><strong>Min:</strong> {weather.weatherMinTemp} km/h</p>
                   <p><strong>Avg Humidity:</strong> {weather.weatherHumidity}</p>
                   <p><strong>Wind:</strong> {weather.weatherWind}%</p>   
-                  <button
-                    type="button"
-                    className="delete-button"
-                    onClick={() => handleDeleteWeather(weather, index)}
-                  >
-                    Delete
-                  </button>
+                  <div style={{ textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      className="edit-button"
+                      onClick={(e) => {
+                        e.stopPropagation();  // Prevent parent onClick
+                        handleEditWeather(weather);
+                      }}
+                      style={{ marginRight: '10px' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="delete-button"
+                      onClick={(e) => {
+                        e.stopPropagation();  // Prevent parent onClick
+                        handleDeleteWeather(weather);
+                      }}                
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </>
         )}
       </main>
+
+      {editingCountry && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Edit Country</h2>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateCountry(); }}>
+              <label>
+                Country Name:
+                <input type="text" name="countryName" value={editCountryForm.countryName} disabled />
+              </label>
+              <label>
+                Region:
+                <input type="text" name="countryRegion" value={editCountryForm.countryRegion} onChange={handleCountryFormChange} />
+              </label>
+              <label>
+                Capital:
+                <input type="text" name="countryCapital" value={editCountryForm.countryCapital} onChange={handleCountryFormChange} />
+              </label>
+              <label>
+                Language:
+                <input type="text" name="countryLanguage" value={editCountryForm.countryLanguage} onChange={handleCountryFormChange} />
+              </label>
+              <label>
+                Translations:
+                <input type="text" name="countryTranslations" value={editCountryForm.countryTranslations} onChange={handleCountryFormChange} />
+              </label>
+              <label>
+                Currency:
+                <input type="text" name="countryCurrency" value={editCountryForm.countryCurrency} onChange={handleCountryFormChange} />
+              </label>
+              <div className="modal-buttons">
+                <button type="submit">Save</button>
+                <button type="button" onClick={() => setEditingCountry(null)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editingAttraction && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Edit Attraction</h2>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateAttraction(); }}>
+              <label>
+                Country Name:
+                <input type="text" name="countryName" value={editAttractionForm.countryName} disabled />
+              </label>
+              <label>
+                Title:
+                <input type="text" name="attractionTitle" value={editAttractionForm.attractionTitle} disabled />
+              </label>
+              <label>
+                Description:
+                <input type="text" name="attractionDescription" value={editAttractionForm.attractionDescription} onChange={handleAttractionFormChange} />
+              </label>
+              <label>
+                Rating:
+                <input type="text" name="attractionRating" value={editAttractionForm.attractionRating} onChange={handleAttractionFormChange} />
+              </label>
+              <label>
+                Review:
+                <input type="text" name="attractionReview" value={editAttractionForm.attractionReview} onChange={handleAttractionFormChange} />
+              </label>
+              <label>
+                Price:
+                <input type="text" name="attractionPrice" value={editAttractionForm.attractionPrice} onChange={handleAttractionFormChange} />
+              </label>
+              <div className="modal-buttons">
+                <button type="submit">Save</button>
+                <button type="button" onClick={() => setEditingAttraction(null)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editingWeather && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Edit Country</h2>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateWeather(); }}>
+              <label>
+                Country Name:
+                <input type="text" name="countryName" value={editWeatherForm.countryName} disabled />
+              </label>
+              <label>
+                Date:
+                <input type="text" name="weatherDate" value={editWeatherForm.weatherDate} disabled />
+              </label>
+              <label>
+                Condition:
+                <input type="text" name="weatherConditionText" value={editWeatherForm.weatherConditionText} onChange={handleWeatherFormChange} />
+              </label>
+              <label>
+                Average Temperature:
+                <input type="text" name="weatherAvgTemp" value={editWeatherForm.weatherAvgTemp} onChange={handleWeatherFormChange} />
+              </label>
+              <label>
+                Max Temperature:
+                <input type="text" name="weatherMaxTemp" value={editWeatherForm.weatherMaxTemp} onChange={handleWeatherFormChange} />
+              </label>
+              <label>
+                Min Temperature:
+                <input type="text" name="weatherMinTemp" value={editWeatherForm.weatherMinTemp} onChange={handleWeatherFormChange} />
+              </label>
+              <label>
+                Humidity:
+                <input type="text" name="weatherHumidity" value={editWeatherForm.weatherHumidity} onChange={handleWeatherFormChange} />
+              </label>
+              <label>
+                Wind:
+                <input type="text" name="weatherWind" value={editWeatherForm.weatherWind} onChange={handleWeatherFormChange} />
+              </label>       
+              <div className="modal-buttons">
+                <button type="submit">Save</button>
+                <button type="button" onClick={() => setEditingWeather(null)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

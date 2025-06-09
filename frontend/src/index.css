@@ -92,10 +92,24 @@ label {
   cursor: not-allowed;
 }
 
+.password-toggle-button {
+  position: absolute;
+  top: 30%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  color: #000;
+}
+
 .error-message {
   color: red;
   margin-bottom: 10px;
   font-weight: 500;
+  text-align: center;
 }
 
 .auth-button {
@@ -262,11 +276,14 @@ label {
 }
 
 .country-flag {
-  height: 150px;
+  width: 100%;             
+  height: auto;             
+  max-height: 150px;        
+  object-fit: cover;       
   border-radius: 10px;
   border: 1px solid #ccc;
-  background-size: cover;
-  background-position: center;
+  display: block;
+  box-sizing: border-box;
 }
 
 .country-name {
@@ -351,12 +368,6 @@ label {
   align-content: center;
 }
 
-.country-flag {
-  min-width: 200px;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-}
-
 .weather-icon {
   vertical-align: middle;
   margin-left: 10px;
@@ -424,7 +435,42 @@ label {
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
 
-.delete-button {
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.modal-content form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.modal-content form input {
+  width: 100%;
+  padding: 6px;
+  margin-top: 4px;
+}
+
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.edit-button, .delete-button {
   width: 30%;
   padding: 10px;  
   font-size: 14px;
@@ -437,6 +483,14 @@ label {
 
 /* Mobile adjustments for screens up to 600px wide */
 @media (max-width: 600px) {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
   .header {
     flex-direction: column;
     align-items: center; 
@@ -475,20 +529,28 @@ label {
   .modal {
     width: 90%;
     padding: 20px;
+    margin-top: 2rem;
   }
 
   .auth-button,
   .add-button,
+  .edit-button,
   .delete-button {
     width: 100%;
   }
 
-  .search-input {
+ .search-input,
+  input,
+  textarea {
     width: 90%;
+    font-size: 1rem;
   }
 
-  .country-card {
+  .country-card,
+  .forecast-card,
+  .attraction-card {
     width: 90%;
+    margin: 1rem auto;
   }
 
   .carousel-slide {

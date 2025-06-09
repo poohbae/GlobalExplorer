@@ -134,6 +134,38 @@ router.get('/favouriteCountry', verifyToken, async (req, res) => {
   }
 });
 
+// Update country
+router.put('/favouriteCountry/:id', verifyToken, async (req, res) => {
+  try {
+    const country = await Country.findById(req.params.id);
+
+    if (!country) {
+      return res.status(404).json({ error: 'Country not found' });
+    }
+
+    // Ensure the user owns the country
+    if (country.userID.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to update this item' });
+    }
+
+    // Update fields - exclude countryName and countryFlag as they are not editable
+    const { countryRegion, countryCapital, countryLanguage, countryTranslations, countryCurrency } = req.body;
+
+    country.countryRegion = countryRegion;
+    country.countryCapital = countryCapital;
+    country.countryLanguage = countryLanguage;
+    country.countryTranslations = countryTranslations;
+    country.countryCurrency = countryCurrency;
+
+    await country.save();
+
+    res.json({ message: 'Country updated successfully', country });
+  } catch (err) {
+    console.error('Update error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Delete country from database
 router.delete('/favouriteCountry/:id', verifyToken, async (req, res) => {
   try {
@@ -208,6 +240,37 @@ router.get('/favouriteAttraction', verifyToken, async (req, res) => {
   }
 });
 
+// Update attraction
+router.put('/favouriteAttraction/:id', verifyToken, async (req, res) => {
+  try {
+    const attraction = await Attraction.findById(req.params.id);
+
+    if (!attraction) {
+      return res.status(404).json({ error: 'Attraction not found' });
+    }
+
+    // Ensure the user owns the attraction
+    if (attraction.userID.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to update this item' });
+    }
+
+    // Update fields - exclude countryName and attractionTitle as they are not editable
+    const { attractionDescription, attractionRating, attractionReview, attractionPrice } = req.body;
+
+    attraction.attractionDescription = attractionDescription;
+    attraction.attractionRating = attractionRating;
+    attraction.attractionReview = attractionReview;
+    attraction.attractionPrice = attractionPrice;
+
+    await attraction.save();
+
+    res.json({ message: 'Attraction updated successfully', country });
+  } catch (err) {
+    console.error('Update error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Delete attraction from database
 router.delete('/favouriteAttraction/:id', verifyToken, async (req, res) => {
   try {
@@ -234,10 +297,10 @@ router.delete('/favouriteAttraction/:id', verifyToken, async (req, res) => {
 // Add weather to database
 router.post('/addWeatherToFavourite', verifyToken, async (req, res) => {
   const { userID, countryName, weatherDate, weatherConditionText, weatherConditionIcon,
-    weatherTemperature, weatherHumidity, weatherWind, weatherMax, weatherMin
+    weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind
   } = req.body;
 
-  if (!userID || !countryName || !weatherDate || !weatherConditionText || !weatherConditionIcon || !weatherTemperature || !weatherHumidity || !weatherWind || !weatherMax || !weatherMin) {
+  if (!userID || !countryName || !weatherDate || !weatherConditionText || !weatherConditionIcon || !weatherAvgTemp || !weatherMaxTemp || !weatherMinTemp || !weatherHumidity || !weatherWind) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -255,7 +318,7 @@ router.post('/addWeatherToFavourite', verifyToken, async (req, res) => {
 
     const weather = new Weather({
       userID: req.user.id, countryName, weatherDate, weatherConditionText, weatherConditionIcon,
-      weatherTemperature, weatherHumidity, weatherWind, weatherMax, weatherMin
+      weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind 
     });
 
     await weather.save();
@@ -281,6 +344,40 @@ router.get('/favouriteWeather', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// Update weather
+router.put('/favouriteWeather/:id', verifyToken, async (req, res) => {
+  try {
+    const weather = await Weather.findById(req.params.id);
+
+    if (!weather) {
+      return res.status(404).json({ error: 'Weather not found' });
+    }
+
+    // Ensure the user owns the weather
+    if (weather.userID.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to update this item' });
+    }
+
+    // Update fields - exclude countryName and attractionTitle as they are not editable
+    const { weatherConditionText, weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind } = req.body;
+
+    weather.weatherConditionText = weatherConditionText;
+    weather.weatherAvgTemp = weatherAvgTemp;
+    weather.weatherMaxTemp = weatherMaxTemp;
+    weather.weatherMinTemp = weatherMinTemp;
+    weather.weatherHumidity = weatherHumidity;
+    weather.weatherWind = weatherWind;
+
+    await weather.save();
+
+    res.json({ message: 'Weather updated successfully', country });
+  } catch (err) {
+    console.error('Update error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 // Delete attraction from database
 router.delete('/favouriteWeather/:id', verifyToken, async (req, res) => {

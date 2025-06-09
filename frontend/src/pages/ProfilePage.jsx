@@ -212,18 +212,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={toggleConfirmPasswordVisibility}
-                    style={{
-                    position: 'absolute',
-                    top: '30%',
-                    right: '10px',
-                    transform: 'translateY(-50%)',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                    margin: 0,
-                    color: '#000',
-                    }}
+                    className="password-toggle-button"
                     aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 >
                     <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />

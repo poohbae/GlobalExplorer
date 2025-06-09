@@ -126,11 +126,11 @@ function AttractionDetail() {
         weatherDate: day.date,
         weatherConditionText: day.day.condition.text,
         weatherConditionIcon: day.day.condition.icon,
-        weatherTemperature: day.day.avgtemp_c.toString(),
+        weatherAvgTemp: day.day.avgtemp_c.toString(),
+        weatherMaxTemp: day.day.maxtemp_c.toString(),
+        weatherMinTemp: day.day.mintemp_c.toString(),
         weatherHumidity: day.day.avghumidity.toString(),
-        weatherWind: day.day.maxwind_kph.toString(),
-        weatherMax: day.day.maxtemp_c.toString(),
-        weatherMin: day.day.mintemp_c.toString()
+        weatherWind: day.day.maxwind_kph.toString()
       };
 
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addWeatherToFavourite`, payload, {

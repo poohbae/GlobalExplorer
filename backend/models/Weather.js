@@ -6,11 +6,11 @@ const WeatherSchema = new mongoose.Schema({
   weatherDate: { type: String, required: true },
   weatherConditionText: { type: String, required: true },
   weatherConditionIcon: { type: String, required: true },
-  weatherTemperature: { type: String, required: true },
+  weatherAvgTemp: { type: String, required: true },
+  weatherMaxTemp: { type: String, required: true },
+  weatherMinTemp: { type: String, required: true },
   weatherHumidity: { type: String, required: true },
-  weatherWind: { type: String, required: true },
-  weatherMax: { type: String, required: true },
-  weatherMin: { type: String, required: true }
+  weatherWind: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Weather', WeatherSchema);

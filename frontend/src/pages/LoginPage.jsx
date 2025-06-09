@@ -75,25 +75,14 @@ export default function Login() {
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                style={{
-                  position: 'absolute',
-                  top: '30%',
-                  right: '10px',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  margin: 0,
-                  color: '#000',
-                }}
+                className="password-toggle-button"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
               </button>
             </div>
 
-            {error && <p className="error-message" style={{ textAlign: 'center' }}>{error}</p>}
+            {error && <p className="error-message">{error}</p>}
             <br />
 
             <button

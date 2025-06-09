@@ -74,7 +74,43 @@ function CountryDetail() {
   ? Object.keys(country.currencies).join(', ')
   : 'N/A';
 
-  const handleAddToFavourite = async (attraction) => {
+  const handleAddCountryToFavourite = async (country) => {
+    try {
+      const userID = localStorage.getItem('userID');
+
+      if (!userID) {
+        alert('User not logged in');
+        return;
+      }
+
+      const payload = {
+        userID,
+        countryName: countryName,
+        countryFlag: country.flags.svg || country.flags.png || '',
+        countryRegion: region,
+        countryCapital: capital,
+        countryLanguage: languages,
+        countryTranslations: translations,
+        countryCurrency: currencies
+      };
+
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addCountryToFavourite`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      alert('Country added to favourites!');
+    } catch (err) {
+      if (err.response?.status === 409) {
+        alert('This country is already in your favourites.');
+      } else {
+        console.error(err);
+        alert('Failed to add favourite');
+      }
+    }
+  };
+
+  const handleAddAttractionToFavourite = async (attraction) => {
     try {
       const userID = localStorage.getItem('userID');
 
@@ -95,15 +131,58 @@ function CountryDetail() {
         attractionThumbnail: attraction.thumbnail || 'N/A'
       };
 
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addToFavourite`, payload, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addAttractionToFavourite`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       alert('Attraction added to favourites!');
     } catch (err) {
-      console.error(err);
-      alert('Failed to add favourite');
+      if (err.response?.status === 409) {
+        alert('This attraction is already in your favourites.');
+      } else {
+        console.error(err);
+        alert('Failed to add favourite');
+      }
+    }
+  };
+
+  const handleAddWeatherToFavourite = async (day) => {
+    try {
+      const userID = localStorage.getItem('userID');
+
+      if (!userID) {
+        alert('User not logged in');
+        return;
+      }
+
+      const payload = {
+        userID,
+        countryName: countryName,
+        weatherDate: day.date,
+        weatherConditionText: day.day.condition.text,
+        weatherConditionIcon: day.day.condition.icon,
+        weatherTemperature: day.day.avgtemp_c.toString(),
+        weatherHumidity: day.day.avghumidity.toString(),
+        weatherWind: day.day.maxwind_kph.toString(),
+        weatherMax: day.day.maxtemp_c.toString(),
+        weatherMin: day.day.mintemp_c.toString()
+      };
+
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addWeatherToFavourite`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      alert('Weather added to favourites!');
+    } catch (err) {
+      if (err.response?.status === 409) {
+        alert('This weather is already in your favourites.');
+      } else {
+        console.error(err);
+        alert('Failed to add favourite');
+      }
     }
   };
 
@@ -128,6 +207,16 @@ function CountryDetail() {
             <p><strong>Languages:</strong> {languages}</p>
             <p><strong>Translations:</strong> {translations}</p>
             <p><strong>Currency:</strong> {currencies}</p>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                  type="button"
+                  className="add-button"
+                  style={{ marginTop: 10 }}
+                  onClick={() => handleAddCountryToFavourite(country)}
+                  >
+                  Add to Favourite
+              </button>
+            </div>
           </div>
 
           {/* Weather Info */}
@@ -161,8 +250,18 @@ function CountryDetail() {
                   <p><strong>{day.date}</strong></p>
                   <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
                   <p>{day.day.condition.text}</p>
+                  <p>Avg Temp: {day.day.avgtemp_c}°C</p>
+                  <p>Humidity: {day.day.avghumidity}%</p>
+                  <p>Wind: {day.day.maxwind_kph} kph</p>
                   <p>Max: {day.day.maxtemp_c}°C</p>
                   <p>Min: {day.day.mintemp_c}°C</p>
+                  <button
+                    type="button"
+                    className="add-button"
+                    onClick={() => handleAddWeatherToFavourite(day)}
+                  >
+                    Add to Favourite
+                  </button>
                 </div>
               ))}
             </div>
@@ -188,7 +287,7 @@ function CountryDetail() {
                     type="button"
                     className="add-button"
                     id={`add-fav-${index}`}
-                    onClick={() => handleAddToFavourite(attraction, index)}
+                    onClick={() => handleAddAttractionToFavourite(attraction, index)}
                   >
                     Add to Favourite
                   </button>

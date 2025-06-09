@@ -8,7 +8,10 @@ import Navbar from '../components/Navbar';
 
 function FavouritePage() {
   const [user, setUser] = useState({username: '',});
-  const [favourites, setFavourites] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [attractions, setAttractions] = useState([]);
+  const [weathers, setWeathers] = useState([]);
+  const [selectedTab, setSelectedTab] = useState('countries');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,42 +29,97 @@ function FavouritePage() {
   }, [navigate]);
 
   useEffect(() => {
-    const fetchFavourites = async () => {
-        try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/favourite`, {
-            headers: {
-            Authorization: `Bearer ${token}`
-            }
-        });
-
-        setFavourites(res.data);
-        } catch (error) {
-        console.error('Failed to fetch favourites:', error);
-        }
+    const token = localStorage.getItem('token');
+    const headers = {
+      Authorization: `Bearer ${token}`
     };
 
-    fetchFavourites();
+    const fetchCountries = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/favouriteCountry`, { headers });
+        setCountries(res.data);
+      } catch (error) {
+        console.error('Failed to fetch countries:', error);
+      }
+    };
+
+    const fetchAttractions = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/favouriteAttraction`, { headers });
+        setAttractions(res.data);
+      } catch (error) {
+        console.error('Failed to fetch attractions:', error);
+      }
+    };
+
+    const fetchWeathers = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/weather`, { headers });
+        setWeathers(res.data);
+      } catch (error) {
+        console.error('Failed to fetch weathers:', error);
+      }
+    };
+
+    fetchCountries();
+    fetchAttractions();
+    fetchWeathers();
   }, []);
 
-  const handleDelete = async (favourite, index) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this favourite?');
+  const handleDeleteCountry = async (country, index) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this country?');
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/auth/favourite/${favourite._id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/auth/favouriteCountry/${country._id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
 
-      setFavourites((prev) => prev.filter((_, i) => i !== index));
-      alert('Favourite deleted successfully');
-
-      navigate('/');
+      setCountries((prev) => prev.filter((_, i) => i !== index));
+      alert('Country deleted successfully');
     } catch (err) {
-      console.error('Failed to delete favourite:', err);
-      alert('Failed to delete favourite');
+      console.error('Failed to delete country:', err);
+      alert('Failed to delete country');
+    }
+  };
+
+  const handleDeleteAttraction = async (attraction, index) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this attraction?');
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/auth/favouriteAttraction/${attraction._id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      setAttractions((prev) => prev.filter((_, i) => i !== index));
+      alert('Attraction deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete attraction:', err);
+      alert('Failed to delete attraction');
+    }
+  };
+
+  const handleDeleteWeather = async (weather, index) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this weather?');
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/auth/favouriteWeather/${weather._id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      setWeathers((prev) => prev.filter((_, i) => i !== index));
+      alert('Weather deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete weather:', err);
+      alert('Failed to delete weather');
     }
   };
 
@@ -71,45 +129,118 @@ function FavouritePage() {
       <Navbar />
 
       <main style={{ flex: 1, padding: '1rem' }}>
-        <h2 style={{ textAlign: 'center' }}>Favourite Attractions</h2>
-          <div className="attractions-grid">
-            {favourites.length === 0 && <p>No favourites found.</p>}
-            {favourites.map((favourite, index) => (
-              <div
-                key={index}
-                className="attraction-card"
-                onClick={() => navigate(`/attractionDetail/${encodeURIComponent(favourite.countryName)}/${encodeURIComponent(favourite.attractionTitle)}`)}
-                style={{ cursor: 'pointer' }}
-              >
-                {favourite.attractionThumbnail && (
-                  <img src={favourite.attractionThumbnail} alt={favourite.attractionTitle} className="attraction-img" />
-                )}
-                <h4>{favourite.attractionTitle}</h4>
-                <p>{favourite.attractionDescription || 'No description available'}</p>
-                <p><strong>Rating:</strong> {favourite.attractionRating ?? 'N/A'} / 5</p>
-                <p><strong>Reviews:</strong> {favourite.attractionReview ?? 'N/A'}</p>
-                <p><strong>Price:</strong> {favourite.attractionPrice ?? 'N/A'}</p>
-                <p>
-                    <strong>Country:</strong> {favourite.countryName}
+        {/* Tabs */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+          <button onClick={() => setSelectedTab('countries')}>Countries</button>
+          <button onClick={() => setSelectedTab('attractions')}>Attractions</button>
+          <button onClick={() => setSelectedTab('weathers')}>Weathers</button>
+        </div>
+
+        {/* Countries Section */}
+        {selectedTab === 'countries' && (
+          <>
+            <h2 style={{ textAlign: 'center' }}>Favourite Countries</h2>
+            <div className="attractions-grid">
+              {countries.length === 0 && <p>No favourite countries found.</p>}
+              {countries.map((country, index) => (
+                <div key={index} className="country-card">
+                  <h2>{country.countryName}</h2>
+                  <img
+                    src={country.countryFlag}
+                    alt={`${country.countryName} flag`}
+                    className="country-flag"
+                  />
+                  <p><strong>Region:</strong> {country.countryRegion}</p>
+                  <p><strong>Capital:</strong> {country.countryCapital}</p>
+                  <p><strong>Languages:</strong> {country.countryLanguage}</p>
+                  <p><strong>Translations:</strong> {country.countryTranslations}</p>
+                  <p><strong>Currency:</strong> {country.countryCurrency}</p>
+                  <div style={{ textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      className="delete-button"
+                      onClick={() => handleDeleteCountry(country, index)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Attractions Section */}
+        {selectedTab === 'attractions' && (
+          <>
+            <h2 style={{ textAlign: 'center' }}>Favourite Attractions</h2>
+            <div className="attractions-grid">
+              {attractions.length === 0 && <p>No favourite attractions found.</p>}
+              {attractions.map((attraction, index) => (
+                <div
+                  key={index}
+                  className="attraction-card"
+                  onClick={() =>
+                    navigate(`/attractionDetail/${encodeURIComponent(attraction.countryName)}/${encodeURIComponent(attraction.attractionTitle)}`)
+                  }
+                  style={{ cursor: 'pointer' }}
+                >
+                  {attraction.attractionThumbnail && (
+                    <img src={attraction.attractionThumbnail} alt={attraction.attractionTitle} className="attraction-img" />
+                  )}
+                  <h4>{attraction.attractionTitle}</h4>
+                  <p>{attraction.attractionDescription || 'No description available'}</p>
+                  <p><strong>Rating:</strong> {attraction.attractionRating ?? 'N/A'} / 5</p>
+                  <p><strong>Reviews:</strong> {attraction.attractionReview ?? 'N/A'}</p>
+                  <p><strong>Price:</strong> {attraction.attractionPrice ?? 'N/A'}</p>
+                  <p>
+                    <strong>Country:</strong> {attraction.countryName}
                     <img
-                        src={favourite.countryFlag}
-                        alt={`${favourite.countryName} flag`}
-                        style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
-                        />
-                </p> 
-                <button
+                      src={attraction.countryFlag}
+                      alt={`${attraction.countryName} flag`}
+                      style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
+                    />
+                  </p>
+                  <button
                     type="button"
                     className="delete-button"
-                    id={`delete-${index}`}
-                    onClick={() => handleDelete(favourite, index)}
+                    onClick={() => handleDeleteAttraction(attraction, index)}
                   >
                     Delete
                   </button>
-              </div>
-            ))}
-          </div>    
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Weathers Section */}
+        {selectedTab === 'weathers' && (
+          <>
+            <h2 style={{ textAlign: 'center' }}>Favourite Weathers</h2>
+            <div className="weather-grid">
+              {weathers.length === 0 && <p>No favourite weathers found.</p>}
+              {weathers.map((weather, index) => (
+                <div key={index} className="weather-card">
+                  <h4>{weather.weatherLocation}</h4>
+                  <p><strong>Temperature:</strong> {weather.temperature}°C</p>
+                  <p><strong>Condition:</strong> {weather.condition}</p>
+                  <p><strong>Humidity:</strong> {weather.humidity}%</p>
+                  <p><strong>Wind:</strong> {weather.windSpeed} km/h</p>
+                  <button
+                    type="button"
+                    className="delete-button"
+                    onClick={() => handleDeleteWeather(weather, index)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </main>
-      
+
       <Footer />
     </div>
   );

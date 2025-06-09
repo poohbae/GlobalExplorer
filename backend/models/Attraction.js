@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const FavouriteSchema = new mongoose.Schema({
+const AttractionSchema = new mongoose.Schema({
   userID: { type: String, required: true },
   countryName: { type: String, required: true },
   countryFlag: { type: String, required: true },
@@ -12,4 +12,4 @@ const FavouriteSchema = new mongoose.Schema({
   attractionThumbnail: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Favourite', FavouriteSchema);
+module.exports = mongoose.model('Attraction', AttractionSchema);

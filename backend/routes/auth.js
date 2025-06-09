@@ -5,7 +5,9 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const User = require('../models/User');
 const verifyToken = require('../middleware/auth');
-const Favourite = require('../models/Favourite');
+const Country = require('../models/Country');
+const Attraction = require('../models/Attraction');
+const Weather = require('../models/Weather');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -82,8 +84,81 @@ router.get('/api/auth/attractions', async (req, res) => {
   }
 });
 
+// Add country to database
+router.post('/addCountryToFavourite', verifyToken, async (req, res) => {
+  const { userID, countryName, countryFlag, countryRegion, countryCapital,
+    countryLanguage, countryTranslations, countryCurrency
+  } = req.body;
+
+  if (!userID || !countryName || !countryFlag || !countryRegion || !countryCapital || !countryLanguage || !countryTranslations || !countryCurrency) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  try {
+    // Check if the country already exists for the user
+    const existing = await Country.findOne({
+      userID: req.user.id,
+      countryName
+    });
+
+    if (existing) {
+      return res.status(409).json({ message: 'Country already in favourites' });
+    }
+
+    const country = new Country({
+      userID: req.user.id, countryName, countryFlag, countryRegion, countryCapital,
+      countryLanguage, countryTranslations, countryCurrency
+    });
+
+    await country.save();
+    res.status(201).json({ message: 'Country added to favourites' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get country details
+router.get('/favouriteCountry', verifyToken, async (req, res) => {
+  try {
+    // Fetch user
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Fetch attractions by userID
+    const countries = await Country.find({ userID: req.user.id });
+
+    res.json(countries);
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete country from database
+router.delete('/favouriteCountry/:id', verifyToken, async (req, res) => {
+  try {
+    const country = await Country.findById(req.params.id);
+
+    if (!country) {
+      return res.status(404).json({ error: 'Country not found' });
+    }
+
+    // Ensure the user owns the attraction
+    if (country.userID.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to delete this item' });
+    }
+
+    await country.deleteOne();
+
+    res.json({ message: 'Country deleted successfully' });
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Add attraction to database
-router.post('/addToFavourite', verifyToken, async (req, res) => {
+router.post('/addAttractionToFavourite', verifyToken, async (req, res) => {
   const { userID, countryName, countryFlag, attractionTitle, attractionDescription,
     attractionRating, attractionReview, attractionPrice, attractionThumbnail
   } = req.body;
@@ -94,7 +169,7 @@ router.post('/addToFavourite', verifyToken, async (req, res) => {
 
   try {
     // Check if the attraction already exists for the user
-    const existing = await Favourite.findOne({
+    const existing = await Attraction.findOne({
       userID: req.user.id,
       attractionTitle,
       countryName
@@ -104,29 +179,29 @@ router.post('/addToFavourite', verifyToken, async (req, res) => {
       return res.status(409).json({ message: 'Attraction already in favourites' });
     }
 
-    const favourite = new Favourite({
+    const attraction = new Attraction({
       userID: req.user.id, countryName, countryFlag, attractionTitle, attractionDescription,
       attractionRating, attractionReview, attractionPrice, attractionThumbnail
     });
 
-    await favourite.save();
+    await attraction.save();
     res.status(201).json({ message: 'Attraction added to favourites' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// Get favourites details
-router.get('/favourite', verifyToken, async (req, res) => {
+// Get attraction details
+router.get('/favouriteAttraction', verifyToken, async (req, res) => {
   try {
     // Fetch user
     const user = await User.findById(req.user.id).select('-password');
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    // Fetch favourites by userID
-    const favourites = await Favourite.find({ userID: req.user.id });
+    // Fetch attractions by userID
+    const attractions = await Attraction.find({ userID: req.user.id });
 
-    res.json(favourites);
+    res.json(attractions);
   } catch (err) {
     console.error('Server error:', err);
     res.status(500).json({ error: 'Server error' });
@@ -134,28 +209,101 @@ router.get('/favourite', verifyToken, async (req, res) => {
 });
 
 // Delete attraction from database
-router.delete('/favourite/:id', verifyToken, async (req, res) => {
+router.delete('/favouriteAttraction/:id', verifyToken, async (req, res) => {
   try {
-    const favourite = await Favourite.findById(req.params.id);
+    const attraction = await Attraction.findById(req.params.id);
 
-    if (!favourite) {
-      return res.status(404).json({ error: 'Favourite not found' });
+    if (!attraction) {
+      return res.status(404).json({ error: 'Attraction not found' });
     }
 
-    // Ensure the user owns the favourite
-    if (favourite.userID.toString() !== req.user.id) {
+    // Ensure the user owns the attraction
+    if (attraction.userID.toString() !== req.user.id) {
       return res.status(403).json({ error: 'Not authorized to delete this item' });
     }
 
-    await favourite.deleteOne();
+    await attraction.deleteOne();
 
-    res.json({ message: 'Favourite deleted successfully' });
+    res.json({ message: 'Attraction deleted successfully' });
   } catch (err) {
     console.error('Delete error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
+// Add weather to database
+router.post('/addWeatherToFavourite', verifyToken, async (req, res) => {
+  const { userID, countryName, weatherDate, weatherConditionText, weatherConditionIcon,
+    weatherTemperature, weatherHumidity, weatherWind, weatherMax, weatherMin
+  } = req.body;
+
+  if (!userID || !countryName || !weatherDate || !weatherConditionText || !weatherConditionIcon || !weatherTemperature || !weatherHumidity || !weatherWind || !weatherMax || !weatherMin) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  try {
+    // Check if the weather already exists for the user
+    const existing = await Weather.findOne({
+      userID: req.user.id,
+      countryName,
+      weatherDate
+    });
+
+    if (existing) {
+      return res.status(409).json({ message: 'Weather already in favourites' });
+    }
+
+    const weather = new Weather({
+      userID: req.user.id, countryName, weatherDate, weatherConditionText, weatherConditionIcon,
+      weatherTemperature, weatherHumidity, weatherWind, weatherMax, weatherMin
+    });
+
+    await weather.save();
+    res.status(201).json({ message: 'Weather added to favourites' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get weather details
+router.get('/favouriteWeather', verifyToken, async (req, res) => {
+  try {
+    // Fetch user
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Fetch attractions by userID
+    const weathers = await Weather.find({ userID: req.user.id });
+
+    res.json(weathers);
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete attraction from database
+router.delete('/favouriteWeather/:id', verifyToken, async (req, res) => {
+  try {
+    const weather = await Weather.findById(req.params.id);
+
+    if (!weather) {
+      return res.status(404).json({ error: 'Weather not found' });
+    }
+
+    // Ensure the user owns the attraction
+    if (weather.userID.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to delete this item' });
+    }
+
+    await weather.deleteOne();
+
+    res.json({ message: 'Weather deleted successfully' });
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // Get user details
 router.get('/profile', verifyToken, async (req, res) => {

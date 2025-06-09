@@ -9,7 +9,7 @@ function AttractionDetail() {
   const [user, setUser] = useState({username: '',});
   const [attraction, setAttraction] = useState([]);
   const [countryFlag, setCountryFlag] = useState('');
-  const [weather, setWeather] = useState(null);
+  const [weathers, setWeathers] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ function AttractionDetail() {
         );
       })
       .then(weatherRes => {
-        setWeather(weatherRes.data);
+        setWeathers(weatherRes.data);
       })
       .catch(err => {
         console.error(err);
@@ -68,14 +68,14 @@ function AttractionDetail() {
         // Reset data to safe fallback states
         setAttraction(null);
         setCountryFlag(null);
-        setWeather(null);
+        setWeathers(null);
       });
   }, [countryName, attractionName]);
 
   if (error) return <p>{error}</p>;
   if (!attraction) return <p style={{ padding: '1rem' }}>Loading attraction details...</p>;
 
-  const handleAddToFavourite = async (attraction) => {
+  const handleAttractionAddToFavourite = async (attraction) => {
     try {
       const userID = localStorage.getItem('userID');
 
@@ -95,7 +95,7 @@ function AttractionDetail() {
         attractionPrice: attraction.price || 'N/A'
       };
 
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addToFavourite`, payload, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addAttractionToFavourite`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -111,6 +111,44 @@ function AttractionDetail() {
     }
   };
 
+  const handleAddWeatherToFavourite = async (day) => {
+    try {
+      const userID = localStorage.getItem('userID');
+
+      if (!userID) {
+        alert('User not logged in');
+        return;
+      }
+
+      const payload = {
+        userID,
+        countryName: countryName,
+        weatherDate: day.date,
+        weatherConditionText: day.day.condition.text,
+        weatherConditionIcon: day.day.condition.icon,
+        weatherTemperature: day.day.avgtemp_c.toString(),
+        weatherHumidity: day.day.avghumidity.toString(),
+        weatherWind: day.day.maxwind_kph.toString(),
+        weatherMax: day.day.maxtemp_c.toString(),
+        weatherMin: day.day.mintemp_c.toString()
+      };
+
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addWeatherToFavourite`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      alert('Weather added to favourites!');
+    } catch (err) {
+      if (err.response?.status === 409) {
+        alert('This weather is already in your favourites.');
+      } else {
+        console.error(err);
+        alert('Failed to add favourite');
+      }
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header username={user?.username} />
@@ -118,7 +156,6 @@ function AttractionDetail() {
       <main style={{ flex: 1, padding: '1rem' }}>
         <Link to={`/attraction`} className="back-link">← Back to Home</Link>
 
-        {/* Attraction Info + Current Weather */}
         <div className="row row-top">
           {/* Attraction Info */}
           <div className="column info">
@@ -146,36 +183,47 @@ function AttractionDetail() {
                 />
               )}
             </p>  
-          </div>      
-
-          {/* 7-Day Forecast */}
-          {weather && (
-            <div className="row forecast-row">
-              <h4 className="forecast-title">7-Day Forecast</h4>
-              <div className="forecast-grid">
-                {weather.forecast.forecastday.map((day, index) => (
-                  <div key={index} className="forecast-card">
-                    <p><strong>{day.date}</strong></p>
-                    <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
-                    <p>{day.day.condition.text}</p>
-                    <p>Max: {day.day.maxtemp_c}°C</p>
-                    <p>Min: {day.day.mintemp_c}°C</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          </div>
+          </div>   
 
           <div style={{ textAlign: 'center' }}>
             <button
                 type="button"
                 className="add-button"
                 style={{ marginTop: 10 }}
-                onClick={() => handleAddToFavourite(attraction)}
+                onClick={() => handleAttractionAddToFavourite(attraction)}
                 >
                 Add to Favourite
             </button>
+          </div>   
+
+          {/* 7-Day Forecast */}
+          {weathers && (
+            <div className="row forecast-row">
+              <h4 className="forecast-title">7-Day Forecast</h4>
+              <div className="forecast-grid">
+                {weathers.forecast.forecastday.map((day, index) => (
+                  <div key={index} className="forecast-card">
+                    <p><strong>{day.date}</strong></p>
+                    <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
+                    <p>{day.day.condition.text}</p>
+                    <p>Avg Temp: {day.day.avgtemp_c}°C</p>
+                    <p>Humidity: {day.day.avghumidity}%</p>
+                    <p>Wind: {day.day.maxwind_kph} kph</p>
+                    <p>Max: {day.day.maxtemp_c}°C</p>
+                    <p>Min: {day.day.mintemp_c}°C</p>
+                    <button
+                      type="button"
+                      className="add-button"
+                      onClick={() => handleAddWeatherToFavourite(day)}
+                      style={{ marginTop: '10px' }}
+                    >
+                      Add to Favourite
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           </div>
         </main>
       <Footer />

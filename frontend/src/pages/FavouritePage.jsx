@@ -54,7 +54,7 @@ function FavouritePage() {
 
     const fetchWeathers = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/weather`, { headers });
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/favouriteWeather`, { headers });
         setWeathers(res.data);
       } catch (error) {
         console.error('Failed to fetch weathers:', error);
@@ -130,10 +130,16 @@ function FavouritePage() {
 
       <main style={{ flex: 1, padding: '1rem' }}>
         {/* Tabs */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
-          <button onClick={() => setSelectedTab('countries')}>Countries</button>
-          <button onClick={() => setSelectedTab('attractions')}>Attractions</button>
-          <button onClick={() => setSelectedTab('weathers')}>Weathers</button>
+        <div className="tab-container">
+          {['countries', 'attractions', 'weathers'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setSelectedTab(tab)}
+              className={`tab-button ${selectedTab === tab ? 'active' : ''}`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </div>
 
         {/* Countries Section */}
@@ -143,7 +149,11 @@ function FavouritePage() {
             <div className="attractions-grid">
               {countries.length === 0 && <p>No favourite countries found.</p>}
               {countries.map((country, index) => (
-                <div key={index} className="country-card">
+                <div key={index} className="attraction-card"
+                onClick={() =>
+                    navigate(`/countryDetail/${encodeURIComponent(country.countryName)}`)
+                  }
+                >
                   <h2>{country.countryName}</h2>
                   <img
                     src={country.countryFlag}
@@ -218,15 +228,17 @@ function FavouritePage() {
         {selectedTab === 'weathers' && (
           <>
             <h2 style={{ textAlign: 'center' }}>Favourite Weathers</h2>
-            <div className="weather-grid">
+            <div className="attractions-grid">
               {weathers.length === 0 && <p>No favourite weathers found.</p>}
               {weathers.map((weather, index) => (
-                <div key={index} className="weather-card">
-                  <h4>{weather.weatherLocation}</h4>
-                  <p><strong>Temperature:</strong> {weather.temperature}°C</p>
-                  <p><strong>Condition:</strong> {weather.condition}</p>
-                  <p><strong>Humidity:</strong> {weather.humidity}%</p>
-                  <p><strong>Wind:</strong> {weather.windSpeed} km/h</p>
+                <div key={index} className="attraction-card">
+                  <p><strong>{weather.countryName}</strong></p>
+                  <p>{weather.weatherDate}</p>
+                  <p><strong>Avg Temp:</strong> {weather.weatherTemperature}°C</p>
+                  <p><strong>Max:</strong> {weather.weatherMax} km/h</p>
+                  <p><strong>Min:</strong> {weather.weatherMin} km/h</p>
+                  <p><strong>Avg Humidity:</strong> {weather.weatherHumidity}</p>
+                  <p><strong>Wind:</strong> {weather.weatherWind}%</p>   
                   <button
                     type="button"
                     className="delete-button"

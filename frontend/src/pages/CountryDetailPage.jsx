@@ -251,10 +251,10 @@ function CountryDetail() {
                   <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
                   <p>{day.day.condition.text}</p>
                   <p>Avg Temp: {day.day.avgtemp_c}°C</p>
-                  <p>Humidity: {day.day.avghumidity}%</p>
-                  <p>Wind: {day.day.maxwind_kph} kph</p>
                   <p>Max: {day.day.maxtemp_c}°C</p>
                   <p>Min: {day.day.mintemp_c}°C</p>
+                  <p>Avg Humidity: {day.day.avghumidity}%</p>
+                  <p>Wind: {day.day.maxwind_kph} kph</p>      
                   <button
                     type="button"
                     className="add-button"

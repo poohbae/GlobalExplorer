@@ -467,31 +467,31 @@ function FavouritePage() {
             <form onSubmit={(e) => { e.preventDefault(); handleUpdateCountry(); }}>
               <label>
                 Country Name:
-                <input type="text" name="countryName" value={editCountryForm.countryName} disabled />
+                <input type="text" className="input-field" name="countryName" value={editCountryForm.countryName} disabled />
               </label>
               <label>
                 Region:
-                <input type="text" name="countryRegion" value={editCountryForm.countryRegion} onChange={handleCountryFormChange} />
+                <input type="text" className="input-field" name="countryRegion" value={editCountryForm.countryRegion} onChange={handleCountryFormChange} />
               </label>
               <label>
                 Capital:
-                <input type="text" name="countryCapital" value={editCountryForm.countryCapital} onChange={handleCountryFormChange} />
+                <input type="text" className="input-field" name="countryCapital" value={editCountryForm.countryCapital} onChange={handleCountryFormChange} />
               </label>
               <label>
                 Language:
-                <input type="text" name="countryLanguage" value={editCountryForm.countryLanguage} onChange={handleCountryFormChange} />
+                <input type="text" className="input-field" name="countryLanguage" value={editCountryForm.countryLanguage} onChange={handleCountryFormChange} />
               </label>
               <label>
                 Translations:
-                <input type="text" name="countryTranslations" value={editCountryForm.countryTranslations} onChange={handleCountryFormChange} />
+                <input type="text" className="input-field" name="countryTranslations" value={editCountryForm.countryTranslations} onChange={handleCountryFormChange} />
               </label>
               <label>
                 Currency:
-                <input type="text" name="countryCurrency" value={editCountryForm.countryCurrency} onChange={handleCountryFormChange} />
+                <input type="text" className="input-field" name="countryCurrency" value={editCountryForm.countryCurrency} onChange={handleCountryFormChange} />
               </label>
               <div className="modal-buttons">
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => setEditingCountry(null)}>Cancel</button>
+                <button type="submit" className="auth-button">Save</button>
+                <button type="button" className="auth-button" onClick={() => setEditingCountry(null)}>Cancel</button>
               </div>
             </form>
           </div>
@@ -505,31 +505,31 @@ function FavouritePage() {
             <form onSubmit={(e) => { e.preventDefault(); handleUpdateAttraction(); }}>
               <label>
                 Country Name:
-                <input type="text" name="countryName" value={editAttractionForm.countryName} disabled />
+                <input type="text" className="input-field" name="countryName" value={editAttractionForm.countryName} disabled />
               </label>
               <label>
                 Title:
-                <input type="text" name="attractionTitle" value={editAttractionForm.attractionTitle} disabled />
+                <input type="text" className="input-field" name="attractionTitle" value={editAttractionForm.attractionTitle} disabled />
               </label>
               <label>
                 Description:
-                <input type="text" name="attractionDescription" value={editAttractionForm.attractionDescription} onChange={handleAttractionFormChange} />
+                <input type="text" className="input-field" name="attractionDescription" value={editAttractionForm.attractionDescription} onChange={handleAttractionFormChange} />
               </label>
               <label>
                 Rating:
-                <input type="text" name="attractionRating" value={editAttractionForm.attractionRating} onChange={handleAttractionFormChange} />
+                <input type="text" className="input-field" name="attractionRating" value={editAttractionForm.attractionRating} onChange={handleAttractionFormChange} />
               </label>
               <label>
                 Review:
-                <input type="text" name="attractionReview" value={editAttractionForm.attractionReview} onChange={handleAttractionFormChange} />
+                <input type="text" className="input-field" name="attractionReview" value={editAttractionForm.attractionReview} onChange={handleAttractionFormChange} />
               </label>
               <label>
                 Price:
-                <input type="text" name="attractionPrice" value={editAttractionForm.attractionPrice} onChange={handleAttractionFormChange} />
+                <input type="text" className="input-field" name="attractionPrice" value={editAttractionForm.attractionPrice} onChange={handleAttractionFormChange} />
               </label>
               <div className="modal-buttons">
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => setEditingAttraction(null)}>Cancel</button>
+                <button type="submit" className="auth-button">Save</button>
+                <button type="button" className="auth-button" onClick={() => setEditingAttraction(null)}>Cancel</button>
               </div>
             </form>
           </div>
@@ -543,39 +543,39 @@ function FavouritePage() {
             <form onSubmit={(e) => { e.preventDefault(); handleUpdateWeather(); }}>
               <label>
                 Country Name:
-                <input type="text" name="countryName" value={editWeatherForm.countryName} disabled />
+                <input type="text" className="input-field" name="countryName" value={editWeatherForm.countryName} disabled />
               </label>
               <label>
                 Date:
-                <input type="text" name="weatherDate" value={editWeatherForm.weatherDate} disabled />
+                <input type="text" className="input-field" name="weatherDate" value={editWeatherForm.weatherDate} disabled />
               </label>
               <label>
                 Condition:
-                <input type="text" name="weatherConditionText" value={editWeatherForm.weatherConditionText} onChange={handleWeatherFormChange} />
+                <input type="text" className="input-field" name="weatherConditionText" value={editWeatherForm.weatherConditionText} onChange={handleWeatherFormChange} />
               </label>
               <label>
                 Average Temperature:
-                <input type="text" name="weatherAvgTemp" value={editWeatherForm.weatherAvgTemp} onChange={handleWeatherFormChange} />
+                <input type="text" className="input-field" name="weatherAvgTemp" value={editWeatherForm.weatherAvgTemp} onChange={handleWeatherFormChange} />
               </label>
               <label>
                 Max Temperature:
-                <input type="text" name="weatherMaxTemp" value={editWeatherForm.weatherMaxTemp} onChange={handleWeatherFormChange} />
+                <input type="text" className="input-field" name="weatherMaxTemp" value={editWeatherForm.weatherMaxTemp} onChange={handleWeatherFormChange} />
               </label>
               <label>
                 Min Temperature:
-                <input type="text" name="weatherMinTemp" value={editWeatherForm.weatherMinTemp} onChange={handleWeatherFormChange} />
+                <input type="text" className="input-field" name="weatherMinTemp" value={editWeatherForm.weatherMinTemp} onChange={handleWeatherFormChange} />
               </label>
               <label>
                 Humidity:
-                <input type="text" name="weatherHumidity" value={editWeatherForm.weatherHumidity} onChange={handleWeatherFormChange} />
+                <input type="text" className="input-field" name="weatherHumidity" value={editWeatherForm.weatherHumidity} onChange={handleWeatherFormChange} />
               </label>
               <label>
                 Wind:
-                <input type="text" name="weatherWind" value={editWeatherForm.weatherWind} onChange={handleWeatherFormChange} />
+                <input type="text" className="input-field" name="weatherWind" value={editWeatherForm.weatherWind} onChange={handleWeatherFormChange} />
               </label>       
               <div className="modal-buttons">
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => setEditingWeather(null)}>Cancel</button>
+                <button type="submit" className="auth-button">Save</button>
+                <button type="button" className="auth-button" onClick={() => setEditingWeather(null)}>Cancel</button>
               </div>
             </form>
           </div>

@@ -276,7 +276,7 @@ label {
 }
 
 .country-flag {
-  width: 90%;             
+  width: 100%;             
   height: auto;             
   max-height: 150px;        
   object-fit: cover;       
@@ -452,23 +452,11 @@ label {
   max-width: 600px;
 }
 
-.modal-content form label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.modal-content form input {
-  width: 100%;
-  padding: 6px;
-  margin-top: 4px;
-}
-
 .modal-buttons {
-  margin-top: 15px;
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
 }
-
 
 .edit-button, .delete-button {
   width: 30%;

@@ -467,7 +467,7 @@ function FavouritePage() {
             <form onSubmit={(e) => { e.preventDefault(); handleUpdateCountry(); }}>
               <label>
                 Country Name:
-                <input type="text" className="input-field" name="countryName" value={editCountryForm.countryName} disabled />
+                <input type="text" className="input-field" name="countryName" value={editCountryForm.countryName} readonly />
               </label>
               <label>
                 Region:
@@ -505,11 +505,11 @@ function FavouritePage() {
             <form onSubmit={(e) => { e.preventDefault(); handleUpdateAttraction(); }}>
               <label>
                 Country Name:
-                <input type="text" className="input-field" name="countryName" value={editAttractionForm.countryName} disabled />
+                <input type="text" className="input-field" name="countryName" value={editAttractionForm.countryName} readonly />
               </label>
               <label>
                 Title:
-                <input type="text" className="input-field" name="attractionTitle" value={editAttractionForm.attractionTitle} disabled />
+                <input type="text" className="input-field" name="attractionTitle" value={editAttractionForm.attractionTitle} readonly />
               </label>
               <label>
                 Description:
@@ -543,11 +543,11 @@ function FavouritePage() {
             <form onSubmit={(e) => { e.preventDefault(); handleUpdateWeather(); }}>
               <label>
                 Country Name:
-                <input type="text" className="input-field" name="countryName" value={editWeatherForm.countryName} disabled />
+                <input type="text" className="input-field" name="countryName" value={editWeatherForm.countryName} readonly />
               </label>
               <label>
                 Date:
-                <input type="text" className="input-field" name="weatherDate" value={editWeatherForm.weatherDate} disabled />
+                <input type="text" className="input-field" name="weatherDate" value={editWeatherForm.weatherDate} readonly />
               </label>
               <label>
                 Condition:

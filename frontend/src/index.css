@@ -452,12 +452,6 @@ label {
   max-width: 600px;
 }
 
-.modal-content label {
-  margin-bottom: 6px;
-  display: block;
-  color: #333;
-}
-
 .modal-buttons {
   display: flex;
   justify-content: space-between;

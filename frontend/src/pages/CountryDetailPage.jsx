@@ -200,7 +200,7 @@ function CountryDetail() {
             <img
               src={country.flags.svg || country.flags.png}
               alt={`${country.name.common} flag`}
-              className="country-flag"
+              className="country-flag" style={{ width: '80%', height: '200px' }}
             />
             <p><strong>Region:</strong> {region}</p>
             <p><strong>Capital:</strong> {capital}</p>

@@ -111,10 +111,10 @@ function HomePage() {
           <div className="country-grid">
             {topCountries.map((country, index) => (
               <div key={index} className="country-card" onClick={() => navigate(`/countryDetail/${encodeURIComponent(country.name)}`)}>
-                <div
-                  className="country-flag"
-                  style={{ backgroundImage: `url(${country.flag})` }}
-                ></div>
+                <img src={country.flag}
+                  alt={`${country.name} flag`}
+                  className="country-flag" 
+                />
                 <p className="country-name">{country.name}</p>
               </div>
             ))}

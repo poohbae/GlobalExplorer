@@ -277,7 +277,7 @@ label {
 
 .country-flag {
   width: 100%;             
-  height: auto;             
+  height: 150px;             
   max-height: 150px;        
   object-fit: cover;       
   border-radius: 10px;
@@ -424,13 +424,13 @@ label {
 }
 
 .tab-button:hover {
-  background-color: #e6e6e6;
+  filter: brightness(85%);
 }
 
 .tab-button.active {
-  background-color: #007bff;
+  background-color: #2e5ca0;
   color: #fff;
-  border: 2px solid #007bff;
+  border: 2px solid #2e5ca0;
   font-weight: bold;
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }

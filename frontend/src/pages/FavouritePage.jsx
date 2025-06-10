@@ -611,7 +611,7 @@ function FavouritePage() {
       {editingWeather && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Edit Country</h2>
+            <h2>Edit Weather</h2>
             <form onSubmit={(e) => { e.preventDefault(); handleUpdateWeather(); }}>
               <label htmlFor="countryName">Country Name:</label>
               <input

@@ -198,11 +198,13 @@ function CountryDetail() {
           {/* Country Info */}
           <div className="column info">
             <h2>{country.name.common}</h2>
-            <img
-              src={country.flags.svg || country.flags.png}
-              alt={`${country.name.common} flag`}
-              className="country-flag" style={{ width: '80%', height: '200px' }}
-            />
+            <div style={{ textAlign: 'center' }}>
+              <img
+                src={country.flags.svg || country.flags.png}
+                alt={`${country.name.common} flag`}
+                className="country-flag" style={{ width: '80%', height: '200px' }}
+              />
+            </div>
             <p><strong>Region:</strong> {region}</p>
             <p><strong>Capital:</strong> {capital}</p>
             <p><strong>Languages:</strong> {languages}</p>

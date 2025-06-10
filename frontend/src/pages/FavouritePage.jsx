@@ -42,6 +42,7 @@ function FavouritePage() {
     weatherHumidity: '',
     weatherWind: ''
   });
+  const [weatherForecast, setWeatherForecast] = useState([]);
 
   const [selectedTab, setSelectedTab] = useState('countries');
   const navigate = useNavigate();
@@ -122,20 +123,41 @@ function FavouritePage() {
     });
   };
 
-  const handleEditWeather = (weather) => {
-    setEditingWeather(weather);
-    setEditWeatherForm({
-      countryName: weather.countryName,
-      weatherDate: weather.weatherDate,
-      weatherConditionText: weather.weatherConditionText,
-      weatherAvgTemp: weather.weatherAvgTemp,
-      weatherMaxTemp: weather.weatherMaxTemp,
-      weatherMinTemp: weather.weatherMinTemp,
-      weatherHumidity: weather.weatherHumidity,
-      weatherWind: weather.weatherWind
-    });
+  const handleEditWeather = async (weather) => {
+    try {
+      const response = await axios.get(
+        `https://api.weatherapi.com/v1/forecast.json?key=8ae2c9ab7adf4818818134257250606&q=${encodeURIComponent(weather.countryName)}&days=7`
+      );
+      
+      const forecastDays = response.data.forecast.forecastday.map(day => ({
+        date: day.date,
+        condition: day.day.condition.text,
+        avgTemp: day.day.avgtemp_c,
+        maxTemp: day.day.maxtemp_c,
+        minTemp: day.day.mintemp_c,
+        humidity: day.day.avghumidity,
+        wind: day.day.maxwind_kph
+      }));
+      
+      setEditingWeather(weather);
+      setEditWeatherForm({
+        countryName: weather.countryName,
+        weatherDate: weather.weatherDate, // current date
+        weatherConditionText: weather.weatherConditionText,
+        weatherAvgTemp: weather.weatherAvgTemp,
+        weatherMaxTemp: weather.weatherMaxTemp,
+        weatherMinTemp: weather.weatherMinTemp,
+        weatherHumidity: weather.weatherHumidity,
+        weatherWind: weather.weatherWind
+      });
+      
+      // Store the forecast data in state
+      setWeatherForecast(forecastDays);
+    } catch (error) {
+      console.error('Failed to fetch weather forecast:', error);
+      alert('Failed to load weather forecast data');
+    }
   };
-
 
   const handleCountryFormChange = (e) => {
     setEditCountryForm({
@@ -147,13 +169,6 @@ function FavouritePage() {
   const handleAttractionFormChange = (e) => {
     setEditAttractionForm({
       ...editAttractionForm,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleWeatherFormChange = (e) => {
-    setEditWeatherForm({
-      ...editWeatherForm,
       [e.target.name]: e.target.value
     });
   };
@@ -221,6 +236,7 @@ function FavouritePage() {
 
       alert('Weather updated successfully');
       setEditingWeather(null);
+      setWeatherForecast([]);
     } catch (err) {
       console.error('Failed to update weather:', err);
       alert('Failed to update weather');
@@ -623,15 +639,37 @@ function FavouritePage() {
                 readOnly
               />
 
-              <label htmlFor="weatherDate">Date:</label>
-              <input
-                type="text"
+              <label htmlFor="weatherDate">Select Date:</label>
+              <select
                 id="weatherDate"
                 className="input-field"
                 name="weatherDate"
                 value={editWeatherForm.weatherDate}
-                readOnly
-              />
+                onChange={(e) => {
+                  // When date changes, update the form with the selected date's weather data
+                  const selectedDate = e.target.value;
+                  const selectedForecast = weatherForecast.find(day => day.date === selectedDate);
+                  
+                  if (selectedForecast) {
+                    setEditWeatherForm({
+                      ...editWeatherForm,
+                      weatherDate: selectedDate,
+                      weatherConditionText: selectedForecast.condition,
+                      weatherAvgTemp: selectedForecast.avgTemp,
+                      weatherMaxTemp: selectedForecast.maxTemp,
+                      weatherMinTemp: selectedForecast.minTemp,
+                      weatherHumidity: selectedForecast.humidity,
+                      weatherWind: selectedForecast.wind
+                    });
+                  }
+                }}
+              >
+                {weatherForecast.map((day) => (
+                  <option key={day.date} value={day.date}>
+                    {day.date}
+                  </option>
+                ))}
+              </select>
 
               <label htmlFor="weatherConditionText">Condition:</label>
               <input
@@ -640,7 +678,7 @@ function FavouritePage() {
                 className="input-field"
                 name="weatherConditionText"
                 value={editWeatherForm.weatherConditionText}
-                onChange={handleWeatherFormChange}
+                readOnly
               />
 
               <label htmlFor="weatherAvgTemp">Average Temperature:</label>
@@ -650,7 +688,7 @@ function FavouritePage() {
                 className="input-field"
                 name="weatherAvgTemp"
                 value={editWeatherForm.weatherAvgTemp}
-                onChange={handleWeatherFormChange}
+                readOnly
               />
 
               <label htmlFor="weatherMaxTemp">Max Temperature:</label>
@@ -660,7 +698,7 @@ function FavouritePage() {
                 className="input-field"
                 name="weatherMaxTemp"
                 value={editWeatherForm.weatherMaxTemp}
-                onChange={handleWeatherFormChange}
+                readOnly
               />
 
               <label htmlFor="weatherMinTemp">Min Temperature:</label>
@@ -670,7 +708,7 @@ function FavouritePage() {
                 className="input-field"
                 name="weatherMinTemp"
                 value={editWeatherForm.weatherMinTemp}
-                onChange={handleWeatherFormChange}
+                readOnly
               />
 
               <label htmlFor="weatherHumidity">Humidity:</label>
@@ -680,7 +718,7 @@ function FavouritePage() {
                 className="input-field"
                 name="weatherHumidity"
                 value={editWeatherForm.weatherHumidity}
-                onChange={handleWeatherFormChange}
+                readOnly
               />
 
               <label htmlFor="weatherWind">Wind:</label>
@@ -690,12 +728,16 @@ function FavouritePage() {
                 className="input-field"
                 name="weatherWind"
                 value={editWeatherForm.weatherWind}
-                onChange={handleWeatherFormChange}
+                readOnly
               />
 
               <div className="modal-buttons">
                 <button type="submit" className="auth-button">Save</button>
-                <button type="button" className="auth-button" onClick={() => setEditingWeather(null)}>Cancel</button>
+                <button type="button" className="auth-button" onClick={() => {
+                    setEditingWeather(null);
+                    setWeatherForecast([]);
+                  }}>Cancel
+                </button>
               </div>
             </form>
 

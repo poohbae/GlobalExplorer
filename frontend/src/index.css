@@ -432,7 +432,7 @@ label {
 }
 
 .tab-button:not(.active) {
-  border-bottom: 3px solid white;
+  border-bottom: 3px solid #333;
 }
 
 .tab-button.active {

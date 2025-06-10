@@ -428,11 +428,10 @@ label {
 
 .tab-button:hover {
   filter: brightness(85%);
-  border-bottom: 3px solid #ccc; 
 }
 
 .tab-button:not(.active) {
-  border-bottom: 3px solid #333;
+  border-bottom: 1px solid #333;
 }
 
 .tab-button.active {

@@ -296,11 +296,11 @@ router.delete('/favouriteAttraction/:id', verifyToken, async (req, res) => {
 
 // Add weather to database
 router.post('/addWeatherToFavourite', verifyToken, async (req, res) => {
-  const { userID, countryName, weatherDate, weatherConditionText, weatherConditionIcon,
+  const { userID, countryName, countryFlag, weatherDate, weatherConditionText, weatherConditionIcon,
     weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind
   } = req.body;
 
-  if (!userID || !countryName || !weatherDate || !weatherConditionText || !weatherConditionIcon || !weatherAvgTemp || !weatherMaxTemp || !weatherMinTemp || !weatherHumidity || !weatherWind) {
+  if (!userID || !countryName || !countryFlag || !weatherDate || !weatherConditionText || !weatherConditionIcon || !weatherAvgTemp || !weatherMaxTemp || !weatherMinTemp || !weatherHumidity || !weatherWind) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -317,7 +317,7 @@ router.post('/addWeatherToFavourite', verifyToken, async (req, res) => {
     }
 
     const weather = new Weather({
-      userID: req.user.id, countryName, weatherDate, weatherConditionText, weatherConditionIcon,
+      userID: req.user.id, countryName,countryFlag, weatherDate, weatherConditionText, weatherConditionIcon,
       weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind 
     });
 

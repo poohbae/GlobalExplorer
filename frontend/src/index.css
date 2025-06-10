@@ -476,6 +476,19 @@ label {
   cursor: pointer;
 }
 
+.input-row {
+  display: flex;
+  gap: 1rem; 
+  margin-bottom: 1rem; 
+}
+
+.input-group {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+}
+
+
 /* Mobile adjustments for screens up to 600px wide */
 @media (max-width: 600px) {
   * {
@@ -595,5 +608,9 @@ label {
     text-align: center;
     padding: 0.8rem 1rem;
     font-size: 1rem;
+  }
+
+  .input-row {
+    flex-direction: column;
   }
 }

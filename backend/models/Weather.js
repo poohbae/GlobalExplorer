@@ -10,7 +10,7 @@ const WeatherSchema = new mongoose.Schema({
   weatherAvgTemp: { type: String, required: true },
   weatherMaxTemp: { type: String, required: true },
   weatherMinTemp: { type: String, required: true },
-  weatherHumidity: { type: String, required: true },
+  weatherAvgHumidity: { type: String, required: true },
   weatherWind: { type: String, required: true }
 });
 

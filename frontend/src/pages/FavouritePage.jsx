@@ -39,7 +39,7 @@ function FavouritePage() {
     weatherAvgTemp: '',
     weatherMaxTemp: '',
     weatherMinTemp: '',
-    weatherHumidity: '',
+    weatherAvgHumidity: '',
     weatherWind: ''
   });
   const [weatherForecast, setWeatherForecast] = useState([]);
@@ -135,7 +135,7 @@ function FavouritePage() {
         avgTemp: day.day.avgtemp_c,
         maxTemp: day.day.maxtemp_c,
         minTemp: day.day.mintemp_c,
-        humidity: day.day.avghumidity,
+        avgHumidity: day.day.avghumidity,
         wind: day.day.maxwind_kph
       }));
       
@@ -147,7 +147,7 @@ function FavouritePage() {
         weatherAvgTemp: weather.weatherAvgTemp,
         weatherMaxTemp: weather.weatherMaxTemp,
         weatherMinTemp: weather.weatherMinTemp,
-        weatherHumidity: weather.weatherHumidity,
+        weatherAvgHumidity: weather.weatherAvgHumidity,
         weatherWind: weather.weatherWind
       });
       
@@ -441,10 +441,10 @@ function FavouritePage() {
                   <h2>{weather.weatherDate}</h2>
                   <p><strong>{weather.countryName}</strong></p>
                   <img src={weather.countryFlag} alt={`${weather.countryName} flag`} className="country-flag" />
-                  <p><strong>Avg Temp:</strong> {weather.weatherAvgTemp}°C</p>
-                  <p><strong>Max:</strong> {weather.weatherMaxTemp} km/h</p>
-                  <p><strong>Min:</strong> {weather.weatherMinTemp} km/h</p>
-                  <p><strong>Avg Humidity:</strong> {weather.weatherHumidity}</p>
+                  <p><strong>Average Temp:</strong> {weather.weatherAvgTemp}°C</p>
+                  <p><strong>Max Temp:</strong> {weather.weatherMaxTemp}°C</p>
+                  <p><strong>Min Temp:</strong> {weather.weatherMinTemp}°C</p>
+                  <p><strong>Average Humidity:</strong> {weather.weatherAvgHumidity}kph</p>
                   <p><strong>Wind:</strong> {weather.weatherWind}%</p>   
                   <div style={{ textAlign: 'center' }}>
                     <button
@@ -658,7 +658,7 @@ function FavouritePage() {
                       weatherAvgTemp: selectedForecast.avgTemp,
                       weatherMaxTemp: selectedForecast.maxTemp,
                       weatherMinTemp: selectedForecast.minTemp,
-                      weatherHumidity: selectedForecast.humidity,
+                      weatherAvgHumidity: selectedForecast.avgHumidity,
                       weatherWind: selectedForecast.wind
                     });
                   }
@@ -691,33 +691,38 @@ function FavouritePage() {
                 readOnly
               />
 
-              <label htmlFor="weatherMaxTemp">Max Temperature:</label>
-              <input
-                type="text"
-                id="weatherMaxTemp"
-                className="input-field"
-                name="weatherMaxTemp"
-                value={editWeatherForm.weatherMaxTemp}
-                readOnly
-              />
+              <div className="input-row">
+                <div className="input-group">
+                  <label htmlFor="weatherMaxTemp">Max Temperature:</label>
+                  <input
+                    type="text"
+                    id="weatherMaxTemp"
+                    className="input-field"
+                    name="weatherMaxTemp"
+                    value={editWeatherForm.weatherMaxTemp}
+                    readOnly
+                  />
+                </div>
+                <div className="input-group">
+                  <label htmlFor="weatherMinTemp">Min Temperature:</label>
+                  <input
+                    type="text"
+                    id="weatherMinTemp"
+                    className="input-field"
+                    name="weatherMinTemp"
+                    value={editWeatherForm.weatherMinTemp}
+                    readOnly
+                  />
+                </div>
+              </div>
 
-              <label htmlFor="weatherMinTemp">Min Temperature:</label>
+              <label htmlFor="weatherAvgHumidity">Average Humidity:</label>
               <input
                 type="text"
-                id="weatherMinTemp"
+                id="weatherAvgHumidity"
                 className="input-field"
-                name="weatherMinTemp"
-                value={editWeatherForm.weatherMinTemp}
-                readOnly
-              />
-
-              <label htmlFor="weatherHumidity">Humidity:</label>
-              <input
-                type="text"
-                id="weatherHumidity"
-                className="input-field"
-                name="weatherHumidity"
-                value={editWeatherForm.weatherHumidity}
+                name="weatherAvgHumidity"
+                value={editWeatherForm.weatherAvgHumidity}
                 readOnly
               />
 

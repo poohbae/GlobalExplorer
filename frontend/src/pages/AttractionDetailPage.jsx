@@ -130,7 +130,7 @@ function AttractionDetail() {
         weatherAvgTemp: day.day.avgtemp_c.toString(),
         weatherMaxTemp: day.day.maxtemp_c.toString(),
         weatherMinTemp: day.day.mintemp_c.toString(),
-        weatherHumidity: day.day.avghumidity.toString(),
+        weatherAvgHumidity: day.day.avghumidity.toString(),
         weatherWind: day.day.maxwind_kph.toString()
       };
 
@@ -207,10 +207,10 @@ function AttractionDetail() {
                     <p><strong>{day.date}</strong></p>
                     <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
                     <p>{day.day.condition.text}</p>
-                    <p>Avg Temp: {day.day.avgtemp_c}°C</p>
+                    <p>Average Temp: {day.day.avgtemp_c}°C</p>
                     <p>Max Temp: {day.day.maxtemp_c}°C</p>
                     <p>Min Temp: {day.day.mintemp_c}°C</p>
-                    <p>Avg Humidity: {day.day.avghumidity}%</p>
+                    <p>Average Humidity: {day.day.avghumidity}%</p>
                     <p>Wind: {day.day.maxwind_kph} kph</p>
                     <button
                       type="button"

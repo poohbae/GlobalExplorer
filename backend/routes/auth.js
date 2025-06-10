@@ -297,10 +297,10 @@ router.delete('/favouriteAttraction/:id', verifyToken, async (req, res) => {
 // Add weather to database
 router.post('/addWeatherToFavourite', verifyToken, async (req, res) => {
   const { userID, countryName, countryFlag, weatherDate, weatherConditionText, weatherConditionIcon,
-    weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind
+    weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherAvgHumidity, weatherWind
   } = req.body;
 
-  if (!userID || !countryName || !countryFlag || !weatherDate || !weatherConditionText || !weatherConditionIcon || !weatherAvgTemp || !weatherMaxTemp || !weatherMinTemp || !weatherHumidity || !weatherWind) {
+  if (!userID || !countryName || !countryFlag || !weatherDate || !weatherConditionText || !weatherConditionIcon || !weatherAvgTemp || !weatherMaxTemp || !weatherMinTemp || !weatherAvgHumidity || !weatherWind) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -317,8 +317,8 @@ router.post('/addWeatherToFavourite', verifyToken, async (req, res) => {
     }
 
     const weather = new Weather({
-      userID: req.user.id, countryName,countryFlag, weatherDate, weatherConditionText, weatherConditionIcon,
-      weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind 
+      userID: req.user.id, countryName, countryFlag, weatherDate, weatherConditionText, weatherConditionIcon,
+      weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherAvgHumidity, weatherWind 
     });
 
     await weather.save();
@@ -360,13 +360,13 @@ router.put('/favouriteWeather/:id', verifyToken, async (req, res) => {
     }
 
     // Update fields - exclude countryName and attractionTitle as they are not editable
-    const { weatherConditionText, weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherHumidity, weatherWind } = req.body;
+    const { weatherConditionText, weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherAvgHumidity, weatherWind } = req.body;
 
     weather.weatherConditionText = weatherConditionText;
     weather.weatherAvgTemp = weatherAvgTemp;
     weather.weatherMaxTemp = weatherMaxTemp;
     weather.weatherMinTemp = weatherMinTemp;
-    weather.weatherHumidity = weatherHumidity;
+    weather.weatherAvgHumidity = weatherAvgHumidity;
     weather.weatherWind = weatherWind;
 
     await weather.save();

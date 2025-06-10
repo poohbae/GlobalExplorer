@@ -166,7 +166,7 @@ function CountryDetail() {
         weatherAvgTemp: day.day.avgtemp_c.toString(),
         weatherMaxTemp: day.day.maxtemp_c.toString(),
         weatherMinTemp: day.day.mintemp_c.toString(),
-        weatherHumidity: day.day.avghumidity.toString(),
+        weatherAvgHumidity: day.day.avghumidity.toString(),
         weatherWind: day.day.maxwind_kph.toString()
       };
 
@@ -202,7 +202,7 @@ function CountryDetail() {
                 src={country.flags.svg || country.flags.png}
                 alt={`${country.name.common} flag`}
                 className="country-flag"
-                style={{ display: 'block', margin: '0 auto', width: '80%', height: '200px' }}
+                style={{ display: 'block', margin: '0 auto', width: '80%' }}
               />     
             <p><strong>Region:</strong> {region}</p>
             <p><strong>Capital:</strong> {capital}</p>
@@ -234,9 +234,9 @@ function CountryDetail() {
                   className="weather-icon"
                 />
               </p>
-              <p><strong>Temperature:</strong> {weather.current.temp_c} °C</p>
-              <p><strong>Feels Like:</strong> {weather.current.feelslike_c} °C</p>
-              <p><strong>Humidity:</strong> {weather.current.humidity} %</p>
+              <p><strong>Temperature:</strong> {weather.current.temp_c}°C</p>
+              <p><strong>Feels Like:</strong> {weather.current.feelslike_c}°C</p>
+              <p><strong>Humidity:</strong> {weather.current.humidity}%</p>
               <p><strong>Wind:</strong> {weather.current.wind_kph} kph ({weather.current.wind_dir})</p>
             </div>
           )}
@@ -252,10 +252,10 @@ function CountryDetail() {
                   <p><strong>{day.date}</strong></p>
                   <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
                   <p>{day.day.condition.text}</p>
-                  <p><strong>Avg Temp:</strong> {day.day.avgtemp_c}°C</p>
-                  <p><strong>Max:</strong> {day.day.maxtemp_c}°C</p>
-                  <p><strong>Min:</strong> {day.day.mintemp_c}°C</p>
-                  <p><strong>Avg Humidity:</strong> {day.day.avghumidity}%</p>
+                  <p><strong>Average Temp:</strong> {day.day.avgtemp_c}°C</p>
+                  <p><strong>Max Temp:</strong> {day.day.maxtemp_c}°C</p>
+                  <p><strong>Min Temp:</strong> {day.day.mintemp_c}°C</p>
+                  <p><strong>Average Humidity:</strong> {day.day.avghumidity}%</p>
                   <p><strong>Wind:</strong> {day.day.maxwind_kph} kph</p>      
                   <button
                     type="button"

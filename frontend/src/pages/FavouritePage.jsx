@@ -693,7 +693,7 @@ function FavouritePage() {
 
               <div className="input-row">
                 <div className="input-group">
-                  <label htmlFor="weatherMaxTemp">Max Temperature (°C):</label>
+                  <label htmlFor="weatherMaxTemp">Max (°C):</label>
                   <input
                     type="text"
                     id="weatherMaxTemp"
@@ -704,7 +704,7 @@ function FavouritePage() {
                   />
                 </div>
                 <div className="input-group">
-                  <label htmlFor="weatherMinTemp">Min Temperature (°C):</label>
+                  <label htmlFor="weatherMinTemp">Min (°C):</label>
                   <input
                     type="text"
                     id="weatherMinTemp"

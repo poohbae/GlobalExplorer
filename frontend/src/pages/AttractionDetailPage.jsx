@@ -123,6 +123,7 @@ function AttractionDetail() {
       const payload = {
         userID,
         countryName: countryName,
+        countryFlag: countryFlag || '',
         weatherDate: day.date,
         weatherConditionText: day.day.condition.text,
         weatherConditionIcon: day.day.condition.icon,

@@ -170,7 +170,7 @@ function FavouritePage() {
       );
 
       setCountries(prev =>
-        prev.map(c => c._id === editingCountry._id ? res.data : c)
+        prev.map(c => c._id === editingCountry._id ? res.data.country : c)
       );
 
       alert('Country updated successfully');
@@ -193,7 +193,7 @@ function FavouritePage() {
       );
 
       setAttractions(prev =>
-        prev.map(c => c._id === editingAttraction._id ? res.data : c)
+        prev.map(a => a._id === editingAttraction._id ? res.data.attraction : a)
       );
 
       alert('Attraction updated successfully');
@@ -216,7 +216,7 @@ function FavouritePage() {
       );
 
       setWeathers(prev =>
-        prev.map(w => w._id === editingWeather._id ? res.data : w)
+        prev.map(w => w._id === editingWeather._id ? res.data.weather : w)
       );
 
       alert('Weather updated successfully');

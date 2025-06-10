@@ -159,6 +159,7 @@ function CountryDetail() {
       const payload = {
         userID,
         countryName: countryName,
+        countryFlag: country.flags.svg || country.flags.png || '',
         weatherDate: day.date,
         weatherConditionText: day.day.condition.text,
         weatherConditionIcon: day.day.condition.icon,

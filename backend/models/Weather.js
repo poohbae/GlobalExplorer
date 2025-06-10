@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const WeatherSchema = new mongoose.Schema({
   userID: { type: String, required: true },
   countryName: { type: String, required: true },
+  countryFlag: { type: String, required: true },
   weatherDate: { type: String, required: true },
   weatherConditionText: { type: String, required: true },
   weatherConditionIcon: { type: String, required: true },

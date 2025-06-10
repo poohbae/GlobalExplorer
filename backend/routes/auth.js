@@ -264,7 +264,7 @@ router.put('/favouriteAttraction/:id', verifyToken, async (req, res) => {
 
     await attraction.save();
 
-    res.json({ message: 'Attraction updated successfully', country });
+    res.json({ message: 'Attraction updated successfully', attraction });
   } catch (err) {
     console.error('Update error:', err);
     res.status(500).json({ error: 'Server error' });
@@ -360,8 +360,9 @@ router.put('/favouriteWeather/:id', verifyToken, async (req, res) => {
     }
 
     // Update fields - exclude countryName and attractionTitle as they are not editable
-    const { weatherConditionText, weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherAvgHumidity, weatherWind } = req.body;
+    const { weatherDate, weatherConditionText, weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherAvgHumidity, weatherWind } = req.body;
 
+    weather.weatherDate = weatherDate;
     weather.weatherConditionText = weatherConditionText;
     weather.weatherAvgTemp = weatherAvgTemp;
     weather.weatherMaxTemp = weatherMaxTemp;
@@ -371,7 +372,7 @@ router.put('/favouriteWeather/:id', verifyToken, async (req, res) => {
 
     await weather.save();
 
-    res.json({ message: 'Weather updated successfully', country });
+    res.json({ message: 'Weather updated successfully', weather });
   } catch (err) {
     console.error('Update error:', err);
     res.status(500).json({ error: 'Server error' });

@@ -444,8 +444,8 @@ function FavouritePage() {
                   <p><strong>Average Temp:</strong> {weather.weatherAvgTemp}°C</p>
                   <p><strong>Max Temp:</strong> {weather.weatherMaxTemp}°C</p>
                   <p><strong>Min Temp:</strong> {weather.weatherMinTemp}°C</p>
-                  <p><strong>Average Humidity:</strong> {weather.weatherAvgHumidity}kph</p>
-                  <p><strong>Wind:</strong> {weather.weatherWind}%</p>   
+                  <p><strong>Average Humidity:</strong> {weather.weatherAvgHumidity}%</p>
+                  <p><strong>Wind:</strong> {weather.weatherWind}kph</p>   
                   <div style={{ textAlign: 'center' }}>
                     <button
                       type="button"
@@ -681,7 +681,7 @@ function FavouritePage() {
                 readOnly
               />
 
-              <label htmlFor="weatherAvgTemp">Average Temperature:</label>
+              <label htmlFor="weatherAvgTemp">Average Temperature (°C):</label>
               <input
                 type="text"
                 id="weatherAvgTemp"
@@ -693,7 +693,7 @@ function FavouritePage() {
 
               <div className="input-row">
                 <div className="input-group">
-                  <label htmlFor="weatherMaxTemp">Max Temperature:</label>
+                  <label htmlFor="weatherMaxTemp">Max Temperature (°C):</label>
                   <input
                     type="text"
                     id="weatherMaxTemp"
@@ -704,7 +704,7 @@ function FavouritePage() {
                   />
                 </div>
                 <div className="input-group">
-                  <label htmlFor="weatherMinTemp">Min Temperature:</label>
+                  <label htmlFor="weatherMinTemp">Min Temperature (°C):</label>
                   <input
                     type="text"
                     id="weatherMinTemp"
@@ -716,7 +716,7 @@ function FavouritePage() {
                 </div>
               </div>
 
-              <label htmlFor="weatherAvgHumidity">Average Humidity:</label>
+              <label htmlFor="weatherAvgHumidity">Average Humidity (%):</label>
               <input
                 type="text"
                 id="weatherAvgHumidity"
@@ -726,7 +726,7 @@ function FavouritePage() {
                 readOnly
               />
 
-              <label htmlFor="weatherWind">Wind:</label>
+              <label htmlFor="weatherWind">Wind (kph):</label>
               <input
                 type="text"
                 id="weatherWind"

@@ -207,10 +207,9 @@ function AttractionDetail() {
                     <p><strong>{day.date}</strong></p>
                     <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} />
                     <p>{day.day.condition.text}</p>
-                    <p>Average Temp: {day.day.avgtemp_c}°C</p>
-                    <p>Max Temp: {day.day.maxtemp_c}°C</p>
-                    <p>Min Temp: {day.day.mintemp_c}°C</p>
-                    <p>Average Humidity: {day.day.avghumidity}%</p>
+                    <p>Max: {day.day.maxtemp_c}°C</p>
+                    <p>Min: {day.day.mintemp_c}°C</p>
+                    <p>Humidity: {day.day.avghumidity}%</p>
                     <p>Wind: {day.day.maxwind_kph} kph</p>
                     <button
                       type="button"

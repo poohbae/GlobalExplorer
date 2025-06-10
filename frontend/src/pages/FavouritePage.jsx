@@ -441,9 +441,9 @@ function FavouritePage() {
                   <h2>{weather.weatherDate}</h2>
                   <p><strong>{weather.countryName}</strong></p>
                   <img src={weather.countryFlag} alt={`${weather.countryName} flag`} className="country-flag" />
-                  <p><strong>Average Temp:</strong> {weather.weatherAvgTemp}°C</p>
-                  <p><strong>Max Temp:</strong> {weather.weatherMaxTemp}°C</p>
-                  <p><strong>Min Temp:</strong> {weather.weatherMinTemp}°C</p>
+                  <p><strong>Average Temperature:</strong> {weather.weatherAvgTemp}°C</p>
+                  <p><strong>Max:</strong> {weather.weatherMaxTemp}°C</p>
+                  <p><strong>Min:</strong> {weather.weatherMinTemp}°C</p>
                   <p><strong>Average Humidity:</strong> {weather.weatherAvgHumidity}%</p>
                   <p><strong>Wind:</strong> {weather.weatherWind}kph</p>   
                   <div style={{ textAlign: 'center' }}>

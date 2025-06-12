@@ -581,14 +581,16 @@ label {
   }
 
   .attractions-grid {
-    grid-template-columns: 1fr;
-    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .attraction-card {
+    width: 90%;
     margin: 1rem 0;
   }
-
+  
   .forecast-grid {
     flex-direction: column;
   }
@@ -611,14 +613,18 @@ label {
   }
 
   .button-group {
+    display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center; 
+    margin-top: 1rem;
   }
 
-  .edit-button, .delete-button {
-    width: 100%;
+  .edit-button,
+  .delete-button {
+    width: 80%; 
+    margin-right: 0 !important; 
   }
-
   .input-row {
     flex-direction: column;
   }

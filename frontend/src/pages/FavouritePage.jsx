@@ -446,7 +446,7 @@ function FavouritePage() {
                   <p><strong>Min:</strong> {weather.weatherMinTemp}°C</p>
                   <p><strong>Average Humidity:</strong> {weather.weatherAvgHumidity}%</p>
                   <p><strong>Wind:</strong> {weather.weatherWind}kph</p>   
-                  <div style={{ textAlign: 'center' }}>
+                  <div className="button-group">
                     <button
                       type="button"
                       className="edit-button"

@@ -342,7 +342,7 @@ function FavouritePage() {
                   <p><strong>Languages:</strong> {country.countryLanguage}</p>
                   <p><strong>Translations:</strong> {country.countryTranslations}</p>
                   <p><strong>Currency:</strong> {country.countryCurrency}</p>
-                  <div style={{ textAlign: 'center' }}>
+                  <div className="button-group">
                     <button
                       type="button"
                       className="edit-button"
@@ -401,7 +401,7 @@ function FavouritePage() {
                       style={{ width: '20px', height: '15px', marginLeft: '5px', verticalAlign: 'middle' }}
                     />
                   </p>
-                  <div style={{ textAlign: 'center' }}>
+                  <div className="button-group">
                     <button
                       type="button"
                       className="edit-button"

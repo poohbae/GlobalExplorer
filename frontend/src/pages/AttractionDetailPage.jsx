@@ -184,9 +184,6 @@ function AttractionDetail() {
                 />
               )}
             </p>  
-          </div>   
-
-          <div style={{ textAlign: 'center' }}>
             <button
                 type="button"
                 className="add-button"

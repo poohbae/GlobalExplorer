@@ -45,7 +45,7 @@ function CountryDetail() {
         return axios
           .get(`${process.env.REACT_APP_API_URL}/api/auth/attractions?country=${encodeURIComponent(countryName)}`)
           .then(attractionRes => {
-            const topSights = attractionRes.data.sights?.slice(0, 5) || [];
+            const topSights = attractionRes.data.sights?.slice(0, 3) || [];
             setAttractions(topSights);
           })
           .catch(err => {

@@ -44,9 +44,12 @@ function HomePage() {
 
         let allAttractions = [];
 
+        // Only fetch attractions for the first 5 countries
+        const maxAttractions = 5;
+
         // Recursive function to chain the requests one by one
         const fetchAttractionForIndex = (index) => {
-          if (index >= selected.length) {
+          if (index >= maxAttractions || index >= selected.length) {
             setTopAttractions(allAttractions);
             return Promise.resolve();
           }

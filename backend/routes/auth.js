@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Call attractions API
-const attractionApiKey = '68aff6cba7b2f5aa3aff372f06392c7e12510f0d030c9e20e0df62d2510cb6c6';
+const attractionApiKey = '72ada419274ab7ab3dcc63cb43f09840cabe503e705c42f6eef195c176ae0cb2';
 
 router.get('/api/auth/attractions', async (req, res) => {
   const country = req.query.country;
@@ -175,7 +175,7 @@ router.delete('/favouriteCountry/:id', verifyToken, async (req, res) => {
       return res.status(404).json({ error: 'Country not found' });
     }
 
-    // Ensure the user owns the attraction
+    // Ensure the user owns the country
     if (country.userID.toString() !== req.user.id) {
       return res.status(403).json({ error: 'Not authorized to delete this item' });
     }
@@ -359,7 +359,6 @@ router.put('/favouriteWeather/:id', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Not authorized to update this item' });
     }
 
-    // Update fields - exclude countryName and attractionTitle as they are not editable
     const { weatherDate, weatherConditionText, weatherAvgTemp, weatherMaxTemp, weatherMinTemp, weatherAvgHumidity, weatherWind } = req.body;
 
     weather.weatherDate = weatherDate;
@@ -380,7 +379,7 @@ router.put('/favouriteWeather/:id', verifyToken, async (req, res) => {
 });
 
 
-// Delete attraction from database
+// Delete weather from database
 router.delete('/favouriteWeather/:id', verifyToken, async (req, res) => {
   try {
     const weather = await Weather.findById(req.params.id);
@@ -389,7 +388,7 @@ router.delete('/favouriteWeather/:id', verifyToken, async (req, res) => {
       return res.status(404).json({ error: 'Weather not found' });
     }
 
-    // Ensure the user owns the attraction
+    // Ensure the user owns the weather
     if (weather.userID.toString() !== req.user.id) {
       return res.status(403).json({ error: 'Not authorized to delete this item' });
     }

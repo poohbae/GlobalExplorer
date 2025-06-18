@@ -37,7 +37,7 @@ function AttractionPage() {
 
         // Shuffle and pick 10 countries
         const shuffled = allCountries.sort(() => 0.5 - Math.random());
-        const selectedCountries = shuffled.slice(0, 10);
+        const selectedCountries = shuffled.slice(0, 5);
         setCountries(selectedCountries);
 
         let allAttractions = [];

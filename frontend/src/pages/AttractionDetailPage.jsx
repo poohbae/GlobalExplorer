@@ -93,7 +93,7 @@ function AttractionDetail() {
         attractionRating: attraction.rating?.toString() || 'N/A',
         attractionReview: attraction.reviews?.toString() || 'N/A',
         attractionPrice: attraction.price || 'N/A',
-        attractionThumbnail: attraction.thumbnail || 'N/A'  // ✅ Add this line
+        attractionThumbnail: attraction.thumbnail || 'N/A'  
       };
 
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/addAttractionToFavourite`, payload, {

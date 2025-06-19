@@ -53,7 +53,7 @@ function AttractionDetail() {
         }
 
         // Fetch weather data
-        const weatherApiKey = '8ae2c9ab7adf4818818134257250606';
+        const weatherApiKey = '7e694559ce8f42b5b5d152120251906';
         return axios.get(
           `https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${encodeURIComponent(countryName)}&days=7`
         );

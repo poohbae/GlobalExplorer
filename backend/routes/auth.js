@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Call attractions API
-const attractionApiKey = 'eeea2e3c07e0b3da7789cb03f0e09a4b256ba8848f785bfde91b14903feda103';
+const attractionApiKey = 'd61c194820a3eca12a84600dddccb322bc8ab16ed14366c04f677c8c7b866f0f';
 
 router.get('/attractions', async (req, res) => {
   const country = req.query.country;

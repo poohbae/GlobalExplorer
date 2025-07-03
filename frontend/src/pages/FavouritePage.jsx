@@ -126,7 +126,7 @@ function FavouritePage() {
   const handleEditWeather = async (weather) => {
     try {
       const response = await axios.get(
-        `https://api.weatherapi.com/v1/forecast.json?key=7e694559ce8f42b5b5d152120251906&q=${encodeURIComponent(weather.countryName)}&days=7`
+        `https://api.weatherapi.com/v1/forecast.json?key=6930068ae3a7409db20153414250307&q=${encodeURIComponent(weather.countryName)}&days=7`
       );
       
       const forecastDays = response.data.forecast.forecastday.map(day => ({
